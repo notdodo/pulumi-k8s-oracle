@@ -1,0 +1,6 @@
+name: pulumi-k8s-oracle
+description: Provisioning of Oracle FreeTier instance with a K8S cluster
+runtime:
+    name: python
+    options:
+        virtualenv: .venv
