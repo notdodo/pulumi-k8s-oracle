@@ -7,18 +7,15 @@ import pulumi_oci as oci
 
 config = Config()
 
-compartment = Compartment().create_compartment(config)
+compartment = Compartment(config.get("compartment_id"))
+network = Network(config=config, compartment=compartment)
 
-vcn = Network().create_vcn(config, compartment)
-subnet = Network().create_subnet(config, compartment, vcn)
-internet_gateway = Network().create_internet_gateway(config, compartment, vcn)
-route_table_internet = Network().create_route_table(
-    config,
-    compartment,
-    vcn,
-    subnet,
-    internet_gateway,
-)
-instance = Instance().create_instaces(config, compartment, subnet)
+network.create_vcn()
+network.create_subnet()
+network.create_internet_gateway()
+network.create_route_table()
+
+
+instance = Instance().create_instaces(config, compartment, network.get_subnet())
 
 outputs(instance)

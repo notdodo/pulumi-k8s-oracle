@@ -14,8 +14,11 @@ Provisioning of Oracle FreeTier instance with a K8S cluster
 ### Provisioning
 
 1. First you need to create the `Compartment` where the resource will be created:
-   1. open the `__main__.py` and comment all below line 11
-   2. run `pulumi up` and wait the creation of the resource
+   1. Run `OCI_TENANCY_ID=$(oci iam compartment list --all --compartment-id-in-subtree true --access-level ACCESSIBLE --include-root --raw-output --query "data[?contains(\"id\",'tenancy')].id | [0]")`
+   2. Run `oci iam compartment create --compartment-id $OCI_TENANCY_ID --name K8SClusterCompartment --description "Compartment for the free instance"`
+   3. The `name` parameter should match the one that you specify in the Pulumi stack config
+   4. Copy the `id` on the output of the last command (i.e. `ocid1.compartment.oc1..aaaaoooo`)
+   5. Run `pulumi config set pulumi-k8s-oracle:compartment_id ocid1.compartment.oc1..aaaaoooo` with the correct Compartment ID
 2. Once you got the `Compartment` in place, restore the `__main__.py` content and run `pulumi up`.
 
 ## TODO

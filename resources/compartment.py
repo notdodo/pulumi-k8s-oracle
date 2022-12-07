@@ -1,7 +1,13 @@
+from pulumi import ResourceOptions
 import pulumi_oci as oci
 
 
 class Compartment:
+    id = ""
+
+    def __init__(self, id) -> None:
+        self.id = id
+
     def create_compartment(self, config):
         try:
             return oci.identity.Compartment(
