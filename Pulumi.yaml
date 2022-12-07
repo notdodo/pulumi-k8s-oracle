@@ -1,5 +1,5 @@
 name: pulumi-k8s-oracle
-description: Provisioning of Oracle FreeTier instance with a K8S cluster
+description: Provisioning of Oracle FreeTier instance with a K8S single node cluster
 runtime:
     name: python
     options:
