@@ -1,4 +1,4 @@
-import os
+import base64
 import pulumi_oci as oci
 
 
@@ -7,6 +7,10 @@ class Instance:
         try:
             get_ad_name = oci.identity.get_availability_domain(
                 compartment_id=config.get("tenancyOcid"), ad_number=1
+            )
+            user_data_plain = open(config.get("user_data")).read()
+            user_data = base64.b64encode(bytes(user_data_plain, "utf-8")).decode(
+                "utf-8"
             )
             ssh_pub_key = open(config.require("path_ssh_pubkey"), "r").read()
 
@@ -59,6 +63,7 @@ class Instance:
                 display_name=config.require("instance_name"),
                 fault_domain="FAULT-DOMAIN-1",
                 metadata={
+                    "user-data": user_data,
                     "ssh_authorized_keys": ssh_pub_key,
                 },
                 shape=config.require("instance_node_shape"),
