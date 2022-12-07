@@ -13,12 +13,13 @@ Provisioning of Oracle FreeTier instance with a K8S cluster
 
 ### Provisioning
 
-Once you got all the requirements simply drop into the pipenv shell and run `pulumi up`.
+1. First you need to create the `Compartment` where the resource will be created:
+   1. open the `__main__.py` and comment all below line 11
+   2. run `pulumi up` and wait the creation of the resource
+2. Once you got the `Compartment` in place, restore the `__main__.py` content and run `pulumi up`.
 
 ## TODO
 
-- actually create the instance (ref. https://blog.ediri.io/pulumi-oci-provider-how-to-create-a-minecraft-arm-instance-on-oracle-cloud-infrastructure)
-  - check if it is compliance with the free tier
 - use `cloud-init` to setup Kube on the startup or at least install required packages
 - connect to SSH using Pulumi to startup the K8S cluster
 - setup CI with GHA
