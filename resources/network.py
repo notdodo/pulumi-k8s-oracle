@@ -5,7 +5,7 @@ class Network:
     def create_vcn(self, config, compartment):
         try:
             return oci.core.Vcn(
-                "instance_vcn",
+                "{}VCN".format(config.get("prefix")),
                 cidr_blocks=[config.get("vcn_cidr_block")],
                 compartment_id=compartment.id,
                 display_name="{}VCN".format(config.get("prefix")),
