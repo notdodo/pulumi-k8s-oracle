@@ -1,6 +1,6 @@
 # pulumi-k8s-oracle
 
-Provisioning of Oracle FreeTier instance with a K8S cluster
+Provisioning of Oracle FreeTier instance with a K3S cluster
 
 ## Usage
 
@@ -24,5 +24,4 @@ Provisioning of Oracle FreeTier instance with a K8S cluster
 
 ## TODO
 
-- use `cloud-init` to setup Kube on the startup or at least install required packages
 - setup CI with GHA
