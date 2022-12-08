@@ -13,9 +13,7 @@ class Network:
         self.__config = config
         self.__compartment = compartment
 
-    def create_vcn(
-        self,
-    ):
+    def create_vcn(self):
         if self.__vcn != "":
             print("VNC already present!")
             return
@@ -47,6 +45,27 @@ class Network:
             print("Subnet already present!")
             return
         try:
+            custom_security_list = oci.core.SecurityList(
+                compartment_id=self.__compartment.id,
+                resource_name="YOLO",
+                vcn_id=self.__vcn.id,
+                display_name="YOLO",
+                egress_security_rules=[
+                    oci.core.SecurityListEgressSecurityRuleArgs(
+                        protocol="all",
+                        destination="0.0.0.0/0",
+                        description="Allow all outbound traffic",
+                    )
+                ],
+                ingress_security_rules=[
+                    oci.core.SecurityListIngressSecurityRuleArgs(
+                        protocol="all",
+                        source="0.0.0.0/0",
+                        description="YOLO",
+                    )
+                ],
+            )
+
             self.__subnet = oci.core.Subnet(
                 compartment_id=self.__compartment.id,
                 resource_name="{}Subnet1".format(self.__config.get("prefix")),
@@ -54,7 +73,7 @@ class Network:
                 cidr_block=self.__config.get("instance_nodesubnet_cidr"),
                 display_name="{}Subnet1".format(self.__config.get("prefix")),
                 security_list_ids=[
-                    self.__vcn.default_security_list_id,
+                    custom_security_list,
                 ],
                 prohibit_public_ip_on_vnic=False,
                 route_table_id=self.__vcn.default_route_table_id,
@@ -82,7 +101,7 @@ class Network:
             )
             oci.core.RouteTableAttachment(
                 resource_name="RouteTable",
-                subnet_id=self.__.id,
+                subnet_id=self.__subnet.id,
                 route_table_id=route_table.id,
             )
         except Exception as err:

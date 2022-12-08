@@ -1,11 +1,14 @@
 #cloud-config
-users:
-  - default
 package_update: true
-
-packages:
-  - apt-transport-https
-  - docker.io
+package_upgrade: true
+package_reboot_if_required: true
 
 runcmd:
-  - touch /tmp/asdf
+  - iptables -P INPUT ACCEPT && iptables -P FORWARD ACCEPT && iptables -P OUTPUT ACCEPT
+  - iptables -F
+  - iptables -X
+  - iptables -Z
+  - iptables -t nat -F && iptables -t nat -X && iptables -t mangle -F && iptables -t mangle -X && iptables -t raw -F &&iptables -t raw -X
+  - curl -sLS https://get.k3sup.dev | sh
+  - mkdir /root/.kube/
+  - k3sup install --local --ip $(curl https://ipinfo.io/ip) --host $(curl https://ipinfo.io/ip) --local-path /root/.kube/kubeconfig --context k3soracleinst

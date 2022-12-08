@@ -63,7 +63,7 @@ class Instance:
                 display_name=config.require("instance_name"),
                 fault_domain="FAULT-DOMAIN-1",
                 metadata={
-                    "user-data": user_data,
+                    "user_data": user_data,
                     "ssh_authorized_keys": ssh_pub_key,
                 },
                 shape=config.require("instance_node_shape"),
