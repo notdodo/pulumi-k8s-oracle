@@ -16,6 +16,9 @@ class Instance:
 
             instance = oci.core.Instance(
                 config.get("instance_name"),
+                instance_options=oci.core.InstanceConfigurationInstanceDetailsLaunchDetailsInstanceOptionsArgs(
+                    are_legacy_imds_endpoints_disabled=True
+                )
                 agent_config=oci.core.InstanceAgentConfigArgs(
                     plugins_configs=[
                         oci.core.InstanceAgentConfigPluginsConfigArgs(
