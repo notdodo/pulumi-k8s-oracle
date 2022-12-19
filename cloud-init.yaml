@@ -8,7 +8,20 @@ runcmd:
   - iptables -F
   - iptables -X
   - iptables -Z
-  - iptables -t nat -F && iptables -t nat -X && iptables -t mangle -F && iptables -t mangle -X && iptables -t raw -F &&iptables -t raw -X
-  - curl -sLS https://get.k3sup.dev | sh
-  - mkdir /root/.kube/
-  - k3sup install --local --ip $(curl https://ipinfo.io/ip) --host $(curl https://ipinfo.io/ip) --local-path /root/.kube/kubeconfig --context k3soracleinst
+  - iptables -t nat -F && iptables -t nat -X && iptables -t mangle -F && iptables -t mangle -X && iptables -t raw -F && iptables -t raw -X
+  - apt-get install -y apt-transport-https ca-certificates curl
+  - curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+  - echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
+  - echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_22.04/ /"| tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+  - echo "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.25/xUbuntu_22.04/ /"| tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable:cri-o:1.25.list
+  - curl -L https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:1.25/xUbuntu_22.04/Release.key | apt-key add -
+  - curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_22.04/Release.key | apt-key add -
+  - apt-get update && apt-get install -y kubelet kubeadm kubectl cri-o cri-o-runc
+  - sysctl -w net.ipv4.ip_forward=1
+  - echo "br_netfilter" > /etc/modules && modprobe br_netfilter
+  - systemctl enable --now crio
+  - kubeadm init --pod-network-cidr=10.123.0.0/16
+  - mkdir -p $HOME/.kube
+  - cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  - chown $(id -u):$(id -g) $HOME/.kube/config
+  - kubectl apply -f https://docs.projectcalico.org/manifests/calico-operator.yaml
