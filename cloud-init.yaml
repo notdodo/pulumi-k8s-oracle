@@ -21,7 +21,10 @@ runcmd:
   - echo "br_netfilter" > /etc/modules && modprobe br_netfilter
   - systemctl enable --now crio
   - kubeadm init --pod-network-cidr=10.123.0.0/16
-  - mkdir -p $HOME/.kube
-  - cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-  - chown $(id -u):$(id -g) $HOME/.kube/config
-  - kubectl apply -f https://docs.projectcalico.org/manifests/calico-operator.yaml
+  - mkdir -p /root/.kube
+  - cp -i /etc/kubernetes/admin.conf /root/.kube/config
+  - kubectl --kubeconfig /root/.kube/config taint nodes --all node-role.kubernetes.io/control-plane-
+  - kubectl --kubeconfig /root/.kube/config apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+  - sleep 10 && KUBE_EDITOR="sed -i 's/metric-resolution=15s/metric-resolution=15s\n        - --kubelet-insecure-tls=true/g'" kubectl --kubeconfig /root/.kube/config edit deployments.apps -n kube-system metrics-server
+  - sleep 10 && kubectl --kubeconfig /root/.kube/config create -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.5/manifests/tigera-operator.yaml
+  - sleep 10 && curl https://raw.githubusercontent.com/projectcalico/calico/v3.24.5/manifests/custom-resources.yaml | sed "s/192.168.0.0/10.123.0.0/g" | kubectl --kubeconfig /root/.kube/config create -f -
