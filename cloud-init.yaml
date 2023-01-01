@@ -29,7 +29,7 @@ runcmd:
   - sysctl -w net.ipv4.ip_forward=1 net.bridge.bridge-nf-call-iptables=1 net.bridge.bridge-nf-call-ip6tables=1 && sysctl --system
   - printf "overlay\nbr_netfilter" > /etc/modules-load.d/modules.conf && modprobe overlay && modprobe br_netfilter
   - systemctl enable --now crio
-  - kubeadm init --pod-network-cidr=10.123.0.0/16 --apiserver-cert-extra-sans=$(ip --brief --json a s | jq -r '.[1].addr_info[0].local'),$(curl ifconfig.me)
+  - kubeadm init --pod-network-cidr=10.123.0.0/16 --apiserver-cert-extra-sans=$(ip --brief --json a s | jq -r '.[1].addr_info[0].local'),$(curl ifconfig.me) --certificate-renewal=true
   - mkdir -p /root/.kube
   - cp -i /etc/kubernetes/admin.conf /root/.kube/config
   - kubectl --kubeconfig /root/.kube/config taint nodes --all node-role.kubernetes.io/control-plane-
