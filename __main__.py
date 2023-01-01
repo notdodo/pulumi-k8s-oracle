@@ -3,7 +3,6 @@ from resources.compartment import Compartment
 from resources.network import Network
 from resources.instance import Instance
 from resources.outputs import outputs
-import pulumi_oci as oci
 
 config = Config()
 

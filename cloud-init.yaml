@@ -2,14 +2,23 @@
 package_update: true
 package_upgrade: true
 package_reboot_if_required: true
+packages:
+  - curl
+  - apt-transport-https
+  - jq
+  - ca-certificates
 
+#https://www.brightbox.com/blog/2020/03/16/how-to-partition-a-boot-disk-on-a-cloud-server/
+bootcmd:
+  - [cloud-init-per, once, addpartition, sgdisk, /dev/sda, '-e', '-n=0:25G:0', -t, '0:8300']
+
+# https://devopscube.com/setup-kubernetes-cluster-kubeadm/
 runcmd:
   - iptables -P INPUT ACCEPT && iptables -P FORWARD ACCEPT && iptables -P OUTPUT ACCEPT
   - iptables -F
   - iptables -X
   - iptables -Z
   - iptables -t nat -F && iptables -t nat -X && iptables -t mangle -F && iptables -t mangle -X && iptables -t raw -F && iptables -t raw -X
-  - apt-get install -y apt-transport-https ca-certificates curl
   - curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
   - echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
   - echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_22.04/ /"| tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
@@ -17,14 +26,10 @@ runcmd:
   - curl -L https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:1.25/xUbuntu_22.04/Release.key | apt-key add -
   - curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_22.04/Release.key | apt-key add -
   - apt-get update && apt-get install -y kubelet kubeadm kubectl cri-o cri-o-runc
-  - sysctl -w net.ipv4.ip_forward=1
-  - echo "br_netfilter" > /etc/modules && modprobe br_netfilter
+  - sysctl -w net.ipv4.ip_forward=1 net.bridge.bridge-nf-call-iptables=1 net.bridge.bridge-nf-call-ip6tables=1 && sysctl --system
+  - printf "overlay\nbr_netfilter" > /etc/modules-load.d/modules.conf && modprobe overlay && modprobe br_netfilter
   - systemctl enable --now crio
-  - kubeadm init --pod-network-cidr=10.123.0.0/16
+  - kubeadm init --pod-network-cidr=10.123.0.0/16 --apiserver-cert-extra-sans=$(ip --brief --json a s | jq -r '.[1].addr_info[0].local'),$(curl ifconfig.me)
   - mkdir -p /root/.kube
   - cp -i /etc/kubernetes/admin.conf /root/.kube/config
   - kubectl --kubeconfig /root/.kube/config taint nodes --all node-role.kubernetes.io/control-plane-
-  - kubectl --kubeconfig /root/.kube/config apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
-  - sleep 10 && KUBE_EDITOR="sed -i 's/metric-resolution=15s/metric-resolution=15s\n        - --kubelet-insecure-tls=true/g'" kubectl --kubeconfig /root/.kube/config edit deployments.apps -n kube-system metrics-server
-  - sleep 10 && kubectl --kubeconfig /root/.kube/config create -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.5/manifests/tigera-operator.yaml
-  - sleep 10 && curl https://raw.githubusercontent.com/projectcalico/calico/v3.24.5/manifests/custom-resources.yaml | sed "s/192.168.0.0/10.123.0.0/g" | kubectl --kubeconfig /root/.kube/config create -f -
