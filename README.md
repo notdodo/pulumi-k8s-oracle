@@ -19,8 +19,9 @@ Provisioning of Oracle FreeTier instance with a K8S cluster
    3. The `name` parameter should match the one that you specify in the Pulumi stack config
    4. Copy the `id` on the output of the last command (i.e. `ocid1.compartment.oc1..aaaaoooo`)
    5. Run `pulumi config set pulumi-k8s-oracle:compartment_id ocid1.compartment.oc1..aaaaoooo` with the correct Compartment ID
-2. Once you got the `Compartment` in place run `pulumi up` and wait for the deployment (_N.B._: the network security group allow all ingress traffic; if this is not ideal for you change it)
-3. Now you can SSH into the machine to fetch the `kubeconfig` file from `/root/.kube/kubeconfig`
+2. If you want to customize the Kubernetes setup edit the file `cloud-init.yaml` on the section about the Yaml file for `kubeadm`
+3. Once you got the `Compartment` in place run `pulumi up` and wait for the deployment (_N.B._: the network security group allow all ingress traffic; if this is not ideal for you change it)
+4. Now you can SSH into the machine to fetch the `kubeconfig` file from `/etc/kubernetes/admin.conf`
 
 ## TODO
 
