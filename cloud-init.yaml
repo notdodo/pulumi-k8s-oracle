@@ -2,8 +2,8 @@
 package_upgrade: true
 package_reboot_if_required: true
 
-bootcmd:
-  - [cloud-init-per, once, addpartition, sgdisk, /dev/sda, '-e', '-n=0:25G:0', -t, '0:8300']
+# bootcmd:
+# - [cloud-init-per, once, addpartition, sgdisk, /dev/sda, '-e', '-n=0:25G:0', -t, '0:8300']
 
 apt:
   preserve_sources_list: true
@@ -131,13 +131,22 @@ write_files:
     permissions: '0644'
     content: |
       apiVersion: kubeadm.k8s.io/v1beta3
+      kind: InitConfiguration
+      localAPIEndpoint:
+        advertiseAddress: 0.0.0.0
+      nodeRegistration:
+        taints: []
+      ---
+      apiVersion: kubeadm.k8s.io/v1beta3
       kind: ClusterConfiguration
+      controlPlaneEndpoint: k8s.thedodo.xyz
       networking:
         dnsDomain: dodo.local
         podSubnet: 10.123.0.0/16
       apiServer:
         certSANs:
-          -  ##MYPUBLICIP##
+          - ##MYPUBLICIP##
+          - k8s.thedodo.xyz
       ---
       apiVersion: kubelet.config.k8s.io/v1beta1
       kind: KubeletConfiguration
@@ -157,5 +166,4 @@ runcmd:
   - systemctl disable netfilter-persistent
   - systemctl enable --now crio
   - sed -i "s/##MYPUBLICIP##/$(curl ifconfig.me)/g" /root/config.yaml
-  - kubeadm init --config /root/config.yaml
-  - kubectl --kubeconfig /etc/kubernetes/admin.conf taint nodes --all node-role.kubernetes.io/control-plane-
+  - kubeadm init --config /root/config.yaml -v=5
