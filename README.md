@@ -2,6 +2,8 @@
 
 Provisioning of Oracle FreeTier instance with a K8S cluster
 
+Manage the cluster using: https://github.com/notdodo/pulumi-k8s
+
 ## Usage
 
 ### Requirements
