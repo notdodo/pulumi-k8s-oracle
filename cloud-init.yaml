@@ -160,7 +160,7 @@ packages:
   - kubectl
 
 runcmd:
-  - iptables -I INPUT -p tcp -m tcp --match multiport --dports 6443,10250 -j ACCEPT
+  - iptables -I INPUT -p tcp -m tcp --match multiport --dports 80,443,6443,10250 -j ACCEPT
   - netfilter-persistent save
   - sysctl --system
   - systemctl enable --now crio
