@@ -14,5 +14,5 @@ network.create_subnet()
 network.create_internet_gateway()
 network.create_route_table()
 
-instance = Instance().create_instaces(config, compartment, network.get_subnet())
+instance = Instance().create_instaces(compartment, network.get_subnet())
 outputs(instance)
