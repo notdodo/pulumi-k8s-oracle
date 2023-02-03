@@ -23,6 +23,7 @@ class Network:
                 cidr_blocks=[self.__config.get("vcn_cidr_block")],
                 compartment_id=self.__compartment.id,
                 display_name="{}VCN".format(self.__config.get("prefix")),
+                byoipv6cidr_details=[],
             )
         except Exception as err:
             print("Error creating VCN: ", str(err))
