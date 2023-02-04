@@ -29,7 +29,47 @@ class Instance:
             policy_id=self.__config.get("backup_policy_id"),
         )
 
-    def create_instaces(self, compartment, node_subnet):
+    def __agent_config(self):
+        return oci.core.InstanceAgentConfigArgs(
+            plugins_configs=[
+                oci.core.InstanceAgentConfigPluginsConfigArgs(
+                    desired_state=self.__config.require("oci_agent_vulnerability"),
+                    name="Vulnerability Scanning",
+                ),
+                oci.core.InstanceAgentConfigPluginsConfigArgs(
+                    desired_state=self.__config.require("oci_agent_osmgmtsvc"),
+                    name="OS Management Service Agent",
+                ),
+                oci.core.InstanceAgentConfigPluginsConfigArgs(
+                    desired_state=self.__config.require("oci_agent_mgmt"),
+                    name="Management Agent",
+                ),
+                oci.core.InstanceAgentConfigPluginsConfigArgs(
+                    desired_state=self.__config.require("oci_agent_customlogs"),
+                    name="Custom Logs Monitoring",
+                ),
+                oci.core.InstanceAgentConfigPluginsConfigArgs(
+                    desired_state=self.__config.require("oci_agent_comptinstance"),
+                    name="Compute Instance Run Command",
+                ),
+                oci.core.InstanceAgentConfigPluginsConfigArgs(
+                    desired_state=self.__config.require(
+                        "oci_agent_comptinstancemonitoring"
+                    ),
+                    name="Compute Instance Monitoring",
+                ),
+                oci.core.InstanceAgentConfigPluginsConfigArgs(
+                    desired_state=self.__config.require("oci_agent_blkvolume"),
+                    name="Block Volume Management",
+                ),
+                oci.core.InstanceAgentConfigPluginsConfigArgs(
+                    desired_state=self.__config.require("oci_agent_bastion"),
+                    name="Bastion",
+                ),
+            ],
+        )
+
+    def create_instance(self, compartment, node_subnet):
         try:
             get_ad_name = oci.identity.get_availability_domain(
                 compartment_id=self.__config.get("tenancyOcid"), ad_number=1
@@ -45,48 +85,7 @@ class Instance:
                 instance_options=oci.core.InstanceConfigurationInstanceDetailsLaunchDetailsInstanceOptionsArgs(
                     are_legacy_imds_endpoints_disabled=True
                 ),
-                agent_config=oci.core.InstanceAgentConfigArgs(
-                    plugins_configs=[
-                        oci.core.InstanceAgentConfigPluginsConfigArgs(
-                            desired_state=self.__config.require(
-                                "oci_agent_vulnerability"
-                            ),
-                            name="Vulnerability Scanning",
-                        ),
-                        oci.core.InstanceAgentConfigPluginsConfigArgs(
-                            desired_state=self.__config.require("oci_agent_osmgmtsvc"),
-                            name="OS Management Service Agent",
-                        ),
-                        oci.core.InstanceAgentConfigPluginsConfigArgs(
-                            desired_state=self.__config.require("oci_agent_mgmt"),
-                            name="Management Agent",
-                        ),
-                        oci.core.InstanceAgentConfigPluginsConfigArgs(
-                            desired_state=self.__config.require("oci_agent_customlogs"),
-                            name="Custom Logs Monitoring",
-                        ),
-                        oci.core.InstanceAgentConfigPluginsConfigArgs(
-                            desired_state=self.__config.require(
-                                "oci_agent_comptinstance"
-                            ),
-                            name="Compute Instance Run Command",
-                        ),
-                        oci.core.InstanceAgentConfigPluginsConfigArgs(
-                            desired_state=self.__config.require(
-                                "oci_agent_comptinstancemonitoring"
-                            ),
-                            name="Compute Instance Monitoring",
-                        ),
-                        oci.core.InstanceAgentConfigPluginsConfigArgs(
-                            desired_state=self.__config.require("oci_agent_blkvolume"),
-                            name="Block Volume Management",
-                        ),
-                        oci.core.InstanceAgentConfigPluginsConfigArgs(
-                            desired_state=self.__config.require("oci_agent_bastion"),
-                            name="Bastion",
-                        ),
-                    ],
-                ),
+                agent_config=self.__agent_config(),
                 availability_domain=get_ad_name.__dict__["name"],
                 compartment_id=compartment.id,
                 create_vnic_details=oci.core.InstanceCreateVnicDetailsArgs(
@@ -107,7 +106,9 @@ class Instance:
                 source_details=oci.core.InstanceSourceDetailsArgs(
                     source_id=self.__select_image(compartment),
                     source_type="image",
-                    boot_volume_size_in_gbs="200",
+                    boot_volume_size_in_gbs=self.__config.require(
+                        "instance_volume_in_gbs"
+                    ),
                 ),
             )
 
