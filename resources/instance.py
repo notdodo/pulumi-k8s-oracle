@@ -10,11 +10,13 @@ class Instance:
         return (
             oci.core.get_images(
                 compartment_id=compartment.id,
-                operating_system=self.__config.get("instance_node_operating_system"),
-                operating_system_version=self.__config.get(
+                operating_system=self.__config.require(
+                    "instance_node_operating_system"
+                ),
+                operating_system_version=self.__config.require(
                     "instance_operating_system_version"
                 ),
-                shape=self.__config.get("instance_node_shape"),
+                shape=self.__config.require("instance_node_shape"),
                 sort_by="TIMECREATED",
                 sort_order="DESC",
             )
@@ -26,7 +28,7 @@ class Instance:
         oci.core.VolumeBackupPolicyAssignment(
             "VolumeBackupPolicyAssignment",
             asset_id=volume,
-            policy_id=self.__config.get("backup_policy_id"),
+            policy_id=self.__config.require("backup_policy_id"),
         )
 
     def __agent_config(self):
@@ -90,7 +92,7 @@ class Instance:
                 compartment_id=compartment.id,
                 create_vnic_details=oci.core.InstanceCreateVnicDetailsArgs(
                     subnet_id=node_subnet.id,
-                    assign_public_ip=self.__config.get("public_ip_enabled"),
+                    assign_public_ip=self.__config.require_bool("public_ip_enabled"),
                 ),
                 display_name=self.__config.require("instance_name"),
                 fault_domain="FAULT-DOMAIN-1",
@@ -100,13 +102,15 @@ class Instance:
                 },
                 shape=self.__config.require("instance_node_shape"),
                 shape_config=oci.core.InstanceShapeConfigArgs(
-                    memory_in_gbs=self.__config.require("instance_node_memory_in_gbs"),
-                    ocpus=self.__config.require("instance_node_ocpus"),
+                    memory_in_gbs=self.__config.require_int(
+                        "instance_node_memory_in_gbs"
+                    ),
+                    ocpus=self.__config.require_int("instance_node_ocpus"),
                 ),
                 source_details=oci.core.InstanceSourceDetailsArgs(
                     source_id=self.__select_image(compartment),
                     source_type="image",
-                    boot_volume_size_in_gbs=self.__config.require(
+                    boot_volume_size_in_gbs=self.__config.require_int(
                         "instance_volume_in_gbs"
                     ),
                 ),

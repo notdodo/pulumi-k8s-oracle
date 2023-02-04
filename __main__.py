@@ -1,9 +1,9 @@
 from pulumi import Config  # pyright: reportShadowedImports=false
-from pulumi_cloudflare import Record
 from resources.compartment import Compartment
 from resources.network import Network
 from resources.instance import Instance
 from resources.outputs import outputs
+import resources.dns as dns
 
 config = Config()
 
@@ -17,14 +17,4 @@ network.create_route_table()
 
 instance = Instance().create_instance(compartment, network.get_subnet())
 outputs(instance)
-
-record = Record(
-    "k8s-record",
-    name=config.get("cloudflare-record-name"),
-    zone_id=config.get("cloudflare-zone-id"),
-    type="A",
-    value=instance.public_ip,
-    allow_overwrite=True,
-    proxied=False,
-    ttl=1,
-)
+dns.create_dns_records(instance.public_ip)

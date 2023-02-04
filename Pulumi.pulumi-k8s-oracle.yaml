@@ -1,18 +1,24 @@
 encryptionsalt: v1:DKFGYLpHGlg=:v1:cg+5jI+HNftQ8fLO:3gJqNRaDyNWUOHiBrLfMPleFC2ba7g==
 config:
   pulumi-k8s-oracle:backup_policy_id: ocid1.volumebackuppolicy.oc1.eu-milan-1.amaaaaaadj3hz4aaizcyyh64ct7r5knwf3z2pgmejsnj4d37wfiy6amwotda
-  pulumi-k8s-oracle:cloudflare-record-name: k8s
+  pulumi-k8s-oracle:cloudflare-record-names:
+    - name: k8s
+      proxy: false
+    - name: vault
+      proxy: true
+    - name: elk
+      proxy: true
   pulumi-k8s-oracle:cloudflare-zone-id:
     secure: v1:4ZQlK1A6/jQa8sRq:UpgxABNOMqx8khB0xpemPJbrGRyzabfr3ES7qP9un4DWfRvG7YWDEoNUlegl/n7j
   pulumi-k8s-oracle:compartment_id: ocid1.compartment.oc1..aaaaaaaa67mtqhzyor6e6c6czevfotrplualyucd573oiqfpqytzvhqutrrq
   pulumi-k8s-oracle:instance_name: K8SFreeNode
-  pulumi-k8s-oracle:instance_node_memory_in_gbs: '24'
-  pulumi-k8s-oracle:instance_node_ocpus: '4'
+  pulumi-k8s-oracle:instance_node_memory_in_gbs: 24
+  pulumi-k8s-oracle:instance_node_ocpus: 4
   pulumi-k8s-oracle:instance_node_operating_system: Canonical Ubuntu
   pulumi-k8s-oracle:instance_node_shape: VM.Standard.A1.Flex
   pulumi-k8s-oracle:instance_nodesubnet_cidr: 10.0.10.0/24
   pulumi-k8s-oracle:instance_operating_system_version: '22.04 Minimal aarch64'
-  pulumi-k8s-oracle:instance_volume_in_gbs: '200'
+  pulumi-k8s-oracle:instance_volume_in_gbs: 200
   pulumi-k8s-oracle:oci_agent_bastion: DISABLED
   pulumi-k8s-oracle:oci_agent_blkvolume: DISABLED
   pulumi-k8s-oracle:oci_agent_comptinstance: ENABLED
@@ -23,7 +29,7 @@ config:
   pulumi-k8s-oracle:oci_agent_vulnerability: DISABLED
   pulumi-k8s-oracle:path_ssh_pubkey: /home/edoardo/Documents/Personal/private-configs/crypto/pub-ssh.key
   pulumi-k8s-oracle:prefix: K8SCluster
-  pulumi-k8s-oracle:public_ip_enabled: 'True'
+  pulumi-k8s-oracle:public_ip_enabled: true
   pulumi-k8s-oracle:tenancyOcid:
     secure: v1:r7gOz0oZeb9OX+Ad:KR8ATFTd3NsSCYSZvgDCG/gAdbEtvn/foc2JJ5vqJ5+FYav5L4UH/iLwi+nxN9bI84OiTJs9NKwW1Dlp1JHpJu0w+5CvG3o9bgUs8q9WGaOLal8zcwpfjb0RS5lgTsE=
   pulumi-k8s-oracle:user_data: cloud-init.yaml
