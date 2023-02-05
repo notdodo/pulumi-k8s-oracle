@@ -12,6 +12,7 @@ Manage the cluster using: https://github.com/notdodo/pulumi-k8s
 2. [Pipenv](https://pipenv.pypa.io/en/latest/) installed on your system
 3. An Oracle Cloud account with the correct permissions to create resources
    1. Also configure [Pulumi with the required secret for Oracle](https://www.pulumi.com/registry/packages/oci/installation-configuration/)
+2. A Cloudflare account with a DNS zone API token
 
 ### Provisioning
 
@@ -24,7 +25,3 @@ Manage the cluster using: https://github.com/notdodo/pulumi-k8s
 2. If you want to customize the Kubernetes setup edit the file `cloud-init.yaml` on the section about the Yaml file for `kubeadm`
 3. Once you got the `Compartment` in place run `pulumi up` and wait for the deployment (_N.B._: the network security group allow all ingress traffic; if this is not ideal for you change it)
 4. Now you can SSH into the machine to fetch the `kubeconfig` file from `/etc/kubernetes/admin.conf`
-
-## TODO
-
-- setup CI with GHA
