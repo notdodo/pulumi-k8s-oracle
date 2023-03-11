@@ -1,5 +1,5 @@
-from pulumi import ResourceOptions
 import pulumi_oci as oci
+from pulumi import ResourceOptions
 
 
 class Compartment:

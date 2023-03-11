@@ -1,9 +1,10 @@
 from pulumi import Config  # pyright: reportShadowedImports=false
-from resources.compartment import Compartment
-from resources.network import Network
-from resources.instance import Instance
-from resources.outputs import outputs
+
 import resources.dns as dns
+from resources.compartment import Compartment
+from resources.instance import Instance
+from resources.network import Network
+from resources.outputs import outputs
 
 config = Config()
 

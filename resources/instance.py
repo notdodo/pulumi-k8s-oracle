@@ -1,6 +1,7 @@
 import base64
-import pulumi_oci as oci
+
 import pulumi
+import pulumi_oci as oci
 
 
 class Instance:

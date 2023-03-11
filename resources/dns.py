@@ -1,5 +1,5 @@
-from pulumi_cloudflare import Record
 from pulumi import Config
+from pulumi_cloudflare import Record
 
 config = Config()
 
