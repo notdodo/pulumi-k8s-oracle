@@ -5,11 +5,11 @@ config = Config()
 
 
 def create_dns_records(target_ip: str):
-    for dns in config.require_object("cloudflare-record-names"):
+    for dns in config.require_object("cloudflare_record_names"):
         Record(
             f"{dns.get('name')}-record",
             name=dns.get("name"),
-            zone_id=config.require("cloudflare-zone-id"),
+            zone_id=config.require("cloudflare_zone_id"),
             type="A",
             value=target_ip,
             allow_overwrite=True,

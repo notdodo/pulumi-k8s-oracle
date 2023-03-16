@@ -92,8 +92,8 @@ apt:
         =YclD
         -----END PGP PUBLIC KEY BLOCK-----
 
-    devel:kubic:libcontainers:stable:cri-o:1.25.list:
-      source: 'deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.25/xUbuntu_22.04/ /'
+    devel:kubic:libcontainers:stable:cri-o:1.26.list:
+      source: 'deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.26/xUbuntu_22.04/ /'
       key: |
         -----BEGIN PGP PUBLIC KEY BLOCK-----
         Version: GnuPG v1.4.5 (GNU/Linux)
