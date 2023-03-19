@@ -165,4 +165,5 @@ runcmd:
   - sysctl --system
   - systemctl enable --now crio
   - sed -i "s/##MYPUBLICIP##/$(curl ifconfig.me)/g" /root/config.yaml
+  - kubeadm config images pull
   - kubeadm init --config /root/config.yaml -v=5
