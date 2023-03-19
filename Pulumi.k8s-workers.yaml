@@ -1,17 +1,9 @@
-encryptionsalt: v1:GBOi4xnxhtY=:v1:/DRYj42Ue+LztLuN:rnk+gv3BaJadQ/qTa0EY0pGjT5Z2iQ==
+encryptionsalt: v1:MmQ1XddgHQE=:v1:VpwzCaInOGA2A0a6:qJRxXerb5NKicvNnwRj2g2tHIZtoHA==
 config:
-  pulumi-k8s-oracle:cloudflare_record_names:
-    - name: k8s
-      proxy: false
-    - name: vault
-      proxy: true
-    - name: elk
-      proxy: true
-  oci:configFileProfile: DEFAULT
-  pulumi-k8s-oracle:cloudflare_zone_id:
-    secure: v1:EZeBKUDTdmWf8mZ+:/gjGOcYjvPY0TdyOj691M8Ca0dfNpWC5VOUgmU4qi1pF7+cYGkJW4nPcl9uS/mOw
-  pulumi-k8s-oracle:instance_name: k8sMaster
-  pulumi-k8s-oracle:compartment_name: k8sMaster
+  oci:configFileProfile: secondary
+  oci:tenancyOcid:
+  pulumi-k8s-oracle:compartment_name: k8sWorker
+  pulumi-k8s-oracle:instance_name: k8sWorker
   pulumi-k8s-oracle:instance_node_memory_in_gbs: 24
   pulumi-k8s-oracle:instance_node_ocpus: 4
   pulumi-k8s-oracle:instance_node_operating_system: Canonical Ubuntu
@@ -28,9 +20,10 @@ config:
   pulumi-k8s-oracle:oci_agent_osmgmtsvc: ENABLED
   pulumi-k8s-oracle:oci_agent_vulnerability: DISABLED
   pulumi-k8s-oracle:path_ssh_pubkey: /home/edoardo/Documents/Personal/private-configs/crypto/pub-ssh.key
-  pulumi-k8s-oracle:prefix: k8sMaster
+  pulumi-k8s-oracle:path_ssh_privkey: /home/edoardo/Documents/Personal/private-configs/crypto/priv-ssh.key
+  pulumi-k8s-oracle:prefix: k8sWorker
   pulumi-k8s-oracle:public_ip_enabled: true
   pulumi-k8s-oracle:tenancyOcid:
-    secure: v1:XFX2ElKWWq1+1fy9:RpwmtA9MNAxGw7ZAHSygn9/ZbXoZLnDdSiq+CNqNsO1eNZVAtAUxFBMnHMPsnOuWBRejA5Q7wHPR9rFowjNREf5tPgb4ZNMhCgAmM37ptD+V6cI/ILKXb6+D07HnuPc=
-  pulumi-k8s-oracle:user_data: cloud-init-master.yaml
+    secure: v1:6Q+FI6AJdXTGjXNI:5CWUbVvMqsdKf3btoEdL5nErl69s+zxEJNLlrgDxwouWcafH/pL6GsWJg9Rdqj3cxdCQftCl0v8qM6QkXxkFPo0J4VqhfTKZaNRb7jITTPqKAXlmB87s8lbVZwX+qOg=
+  pulumi-k8s-oracle:user_data: cloud-init-worker.yaml
   pulumi-k8s-oracle:vcn_cidr_block: 10.0.0.0/16

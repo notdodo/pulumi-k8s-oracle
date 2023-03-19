@@ -7,8 +7,10 @@ name = "pypi"
 pulumi = "<4.0.0,>=3.0.0"
 pulumi-oci = "*"
 pulumi-cloudflare = "*"
+pulumi-command = "*"
 
 [dev-packages]
+flake8 = "*"
 
 [requires]
 python_version = "3.10"

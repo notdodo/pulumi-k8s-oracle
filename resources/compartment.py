@@ -1,7 +1,7 @@
-import pulumi_oci as oci
-import pulumi
-
 from typing import Optional
+
+import pulumi
+import pulumi_oci as oci
 
 
 class Compartment(pulumi.ComponentResource):
