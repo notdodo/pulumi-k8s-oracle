@@ -92,8 +92,8 @@ apt:
         =YclD
         -----END PGP PUBLIC KEY BLOCK-----
 
-    devel:kubic:libcontainers:stable:cri-o:1.26.list:
-      source: 'deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.26/xUbuntu_22.04/ /'
+    devel:kubic:libcontainers:stable:cri-o:##CRIOVERSION##.list:
+      source: 'deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/##CRIOVERSION##/xUbuntu_22.04/ /'
       key: |
         -----BEGIN PGP PUBLIC KEY BLOCK-----
         Version: GnuPG v1.4.5 (GNU/Linux)
@@ -127,14 +127,28 @@ write_files:
       net.ipv4.ip_forward = 1
       net.bridge.bridge-nf-call-iptables = 1
       net.bridge.bridge-nf-call-ip6tables = 1
+  - path: /etc/wireguard/wgWorker.conf
+    permissions: '0600'
+    content: |
+      [Interface]
+      PrivateKey = ##WIREGUARDPRIVATEKEY##
+      Address = 0.0.0.0
+      ListenPort = 51000
+
+      [Peer]
+      PublicKey = ##PEERPUBKEY##
+      AllowedIPs = ##ALLOWEDIPS##
+      Endpoint = ##PEERIP##:51000
 
 packages:
   - cri-o
   - cri-o-runc
   - kubeadm
+  - wireguard
 
 runcmd:
-  # - iptables -I INPUT -p tcp -m tcp --match multiport --dports 80,443,6443,10250 -j ACCEPT
-  # - netfilter-persistent save
+  - iptables -I INPUT -p tcp -m tcp --match multiport --dports 51000 -j ACCEPT
+  - netfilter-persistent save
   - sysctl --system
   - systemctl enable --now crio
+  - systemctl enable wg-quick@wgWorker

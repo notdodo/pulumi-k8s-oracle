@@ -1,6 +1,55 @@
 name: pulumi-k8s-oracle
 description: Provisioning of Oracle FreeTier instance with a K8S cluster
 runtime:
-    name: python
-    options:
-        virtualenv: .venv
+  name: python
+  options:
+    virtualenv: .venv
+config:
+  base_domain: thedodo.xyz
+  base_stack_ref: notdodo/pulumi-k8s-oracle/
+  crio_version: '1.26'
+  masters_config:
+    - instance_name: k8sMaster
+      instance_memory_in_gbs: '24'
+      instance_ocpus: '4'
+      instance_operating_system: Canonical Ubuntu
+      instance_shape: VM.Standard.A1.Flex
+      instance_subnet_cidr: 10.0.10.0/24
+      instance_operating_system_version: '22.04 Minimal aarch64'
+      instance_volume_in_gbs: '200'
+      oci_agent_bastion: DISABLED
+      oci_agent_blkvolume: DISABLED
+      oci_agent_comptinstance: ENABLED
+      oci_agent_comptinstancemonitoring: ENABLED
+      oci_agent_customlogs: ENABLED
+      oci_agent_mgmt: DISABLED
+      oci_agent_osmgmtsvc: ENABLED
+      oci_agent_vulnerability: DISABLED
+      peer_public_key: 'H2/vZFKgl1O0ylxYp5jPfO2D+I2mjmoA/braUp7YVRU='
+      vcn_cidr_block: 10.0.0.0/16
+      public_ip_enabled: 'true'
+      user_data: cloud-init-master.yaml
+  workers_config:
+    - instance_name: k8sWorker
+      instance_memory_in_gbs: '24'
+      instance_ocpus: '4'
+      instance_operating_system: Canonical Ubuntu
+      instance_shape: VM.Standard.A1.Flex
+      instance_subnet_cidr: 10.0.10.0/24
+      instance_operating_system_version: '22.04 Minimal aarch64'
+      instance_volume_in_gbs: '200'
+      oci_agent_bastion: DISABLED
+      oci_agent_blkvolume: DISABLED
+      oci_agent_comptinstance: ENABLED
+      oci_agent_comptinstancemonitoring: ENABLED
+      oci_agent_customlogs: ENABLED
+      oci_agent_mgmt: DISABLED
+      oci_agent_osmgmtsvc: ENABLED
+      oci_agent_vulnerability: DISABLED
+      peer_public_key: 'c4bxt+MIilAF4a3aZDsrSAjrArU1okX9rkhrFMBTGgA='
+      vcn_cidr_block: 10.0.0.0/16
+      public_ip_enabled: 'true'
+      user_data: cloud-init-worker.yaml
+  kubernetes_config:
+    - pod_subnet: 10.123.0.0/16
+      domain: k8s.thedodo.xyz

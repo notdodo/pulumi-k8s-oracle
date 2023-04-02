@@ -17,6 +17,7 @@ class Network(pulumi.ComponentResource):
     def __init__(
         self,
         compartment: Compartment,
+        node_config: dict,
         props: Optional[pulumi.Inputs] = None,
         opts: Optional[pulumi.ResourceOptions] = None,
         remote: bool = False,
@@ -24,21 +25,23 @@ class Network(pulumi.ComponentResource):
         super().__init__("oracle:network", "oracle:network", props, opts, remote)
         self.__child_opts = pulumi.ResourceOptions(parent=self)
         self.__compartment = compartment
-        self.__config = pulumi.Config()
+        self.__config = node_config
 
     def create_vcn(self):
         self.__vcn = oci.core.Vcn(
-            "{}VCN".format(self.__config.get("prefix")),
+            "{}VCN".format(self.__config.get("instance_name")),
             cidr_blocks=[self.__config.get("vcn_cidr_block")],
             compartment_id=self.__compartment.id,
-            display_name="{}VCN".format(self.__config.get("prefix")),
+            display_name="{}VCN".format(self.__config.get("instance_name")),
             byoipv6cidr_details=[],
             opts=self.__child_opts,
         )
 
     def create_internet_gateway(self):
         self.__internet_gateway = oci.core.InternetGateway(
-            resource_name="{}InternetGateway".format(self.__config.get("prefix")),
+            resource_name="{}InternetGateway".format(
+                self.__config.get("instance_name")
+            ),
             compartment_id=self.__compartment.id,
             vcn_id=self.__vcn.id,
             opts=self.__child_opts,
@@ -69,10 +72,10 @@ class Network(pulumi.ComponentResource):
 
         self.__subnet = oci.core.Subnet(
             compartment_id=self.__compartment.id,
-            resource_name="{}Subnet1".format(self.__config.get("prefix")),
+            resource_name="{}Subnet1".format(self.__config.get("instance_name")),
             vcn_id=self.__vcn.id,
-            cidr_block=self.__config.get("instance_nodesubnet_cidr"),
-            display_name="{}Subnet1".format(self.__config.get("prefix")),
+            cidr_block=self.__config.get("instance_subnet_cidr"),
+            display_name="{}Subnet1".format(self.__config.get("instance_name")),
             security_list_ids=[
                 custom_security_list,
             ],
@@ -85,7 +88,7 @@ class Network(pulumi.ComponentResource):
     def create_route_table(self):
         self.__route_table = oci.core.DefaultRouteTable(
             compartment_id=self.__compartment.id,
-            resource_name="{}RouteTable".format(self.__config.get("prefix")),
+            resource_name="{}RouteTable".format(self.__config.get("instance_name")),
             route_rules=[
                 oci.core.RouteTableRouteRuleArgs(
                     network_entity_id=self.__internet_gateway.id,

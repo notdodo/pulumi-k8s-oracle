@@ -92,8 +92,8 @@ apt:
         =YclD
         -----END PGP PUBLIC KEY BLOCK-----
 
-    devel:kubic:libcontainers:stable:cri-o:1.26.list:
-      source: 'deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.26/xUbuntu_22.04/ /'
+    devel:kubic:libcontainers:stable:cri-o:##CRIOVERSION##.list:
+      source: 'deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/##CRIOVERSION##/xUbuntu_22.04/ /'
       key: |
         -----BEGIN PGP PUBLIC KEY BLOCK-----
         Version: GnuPG v1.4.5 (GNU/Linux)
@@ -139,18 +139,30 @@ write_files:
       ---
       apiVersion: kubeadm.k8s.io/v1beta3
       kind: ClusterConfiguration
-      controlPlaneEndpoint: k8s.thedodo.xyz
+      controlPlaneEndpoint: ##PUBLICDOMAIN##
       networking:
         dnsDomain: cluster.local
-        podSubnet: 10.123.0.0/16
+        podSubnet: ##PODSUBNET##
       apiServer:
         certSANs:
           - ##MYPUBLICIP##
-          - k8s.thedodo.xyz
+          - ##PUBLICDOMAIN##
       ---
       apiVersion: kubelet.config.k8s.io/v1beta1
       kind: KubeletConfiguration
       serverTLSBootstrap: true
+  - path: /etc/wireguard/wgMaster.conf
+    permissions: '0600'
+    content: |
+      [Interface]
+      PrivateKey = ##WIREGUARDPRIVATEKEY##
+      Address = 0.0.0.0
+      ListenPort = 51000
+
+      [Peer]
+      PublicKey = ##PEERPUBKEY##
+      AllowedIPs = ##ALLOWEDIPS##
+      Endpoint = ##PEERIP##:51000
 
 packages:
   - cri-o
@@ -158,9 +170,11 @@ packages:
   - kubelet
   - kubeadm
   - kubectl
+  - wireguard
 
 runcmd:
-  - iptables -I INPUT -p tcp -m tcp --match multiport --dports 80,443,6443,10250 -j ACCEPT
+  - iptables -I INPUT -p tcp -m tcp --match multiport --dports 80,443,6443,10250,51000 -j ACCEPT
+  - systemctl enable --now wg-quick@wgMaster
   - netfilter-persistent save
   - sysctl --system
   - systemctl enable --now crio

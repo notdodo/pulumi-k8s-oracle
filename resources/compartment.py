@@ -7,20 +7,18 @@ import pulumi_oci as oci
 class Compartment(pulumi.ComponentResource):
     def __init__(
         self,
-        props: Optional[pulumi.Inputs] = None,
+        name: str,
         opts: Optional[pulumi.ResourceOptions] = None,
-        remote: bool = False,
     ) -> None:
-        self.__config = pulumi.Config()
-        super().__init__("oracle:Compartment", self.__config.get("prefix"), None, opts)
+        super().__init__("oracle:Compartment", name, None, opts)
         self.__child_opts = pulumi.ResourceOptions(parent=self)
-        self.compartment = self.__create_compartment()
+        self.compartment = self.__create_compartment(name)
         self.id = self.get_id()
 
-    def __create_compartment(self) -> oci.identity.Compartment:
+    def __create_compartment(self, name: str) -> oci.identity.Compartment:
         return oci.identity.Compartment(
-            "{}Compartment".format(self.__config.get("prefix")),
-            name="{}Compartment".format(self.__config.get("prefix")),
+            "{}Compartment".format(name),
+            name="{}Compartment".format(name),
             description="Compartment for the free tier",
             opts=self.__child_opts,
         )

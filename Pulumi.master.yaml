@@ -1,0 +1,17 @@
+encryptionsalt: v1:GBOi4xnxhtY=:v1:/DRYj42Ue+LztLuN:rnk+gv3BaJadQ/qTa0EY0pGjT5Z2iQ==
+config:
+  oci:configFileProfile: DEFAULT
+  pulumi-k8s-oracle:cloudflare_record_names:
+    - name: k8s
+      proxy: false
+    - name: vault
+      proxy: true
+    - name: elk
+      proxy: true
+  pulumi-k8s-oracle:cloudflare_zone_id:
+    secure: v1:EZeBKUDTdmWf8mZ+:/gjGOcYjvPY0TdyOj691M8Ca0dfNpWC5VOUgmU4qi1pF7+cYGkJW4nPcl9uS/mOw
+  pulumi-k8s-oracle:compartment_name: k8sMaster
+  pulumi-k8s-oracle:tenancy_ocid:
+    secure: v1:XFX2ElKWWq1+1fy9:RpwmtA9MNAxGw7ZAHSygn9/ZbXoZLnDdSiq+CNqNsO1eNZVAtAUxFBMnHMPsnOuWBRejA5Q7wHPR9rFowjNREf5tPgb4ZNMhCgAmM37ptD+V6cI/ILKXb6+D07HnuPc=
+  pulumi-k8s-oracle:wireguard_private_key:
+    secure: v1:0y0P1Q/Xlsxunndh:bG/tSuYdxZksdtuBB0Z/nwt3AmBgDyTUsjKleTuyl1Vyj9xRAAoruVWatQL5g8to1qgW6PmpzYxsSpX0

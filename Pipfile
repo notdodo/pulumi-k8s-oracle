@@ -8,6 +8,7 @@ pulumi = "<4.0.0,>=3.0.0"
 pulumi-oci = "*"
 pulumi-cloudflare = "*"
 pulumi-command = "*"
+pulumi-tls = "*"
 
 [dev-packages]
 flake8 = "*"
