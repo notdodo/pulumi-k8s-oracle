@@ -75,9 +75,6 @@ user_data_substitutions = {
 }
 
 if "worker" in pulumi.get_stack():
-    master_stack = pulumi.StackReference(config.require("base_stack_ref") + "master")
-    master_ip = master_stack.get_output("instance_ip")
-
     connection = pc.remote.ConnectionArgs(
         user="ubuntu",
         host="k8s.thedodo.xyz",
@@ -91,9 +88,7 @@ if "worker" in pulumi.get_stack():
     instance_extra_cmds.append(token.stdout)
     instance_extra_cmds.append(
         pulumi.Output.concat(
-            'sudo sed -i "s/##PEERIP##/',
-            master_ip,
-            '/g" /etc/wireguard/wgWorker.conf; sudo systemctl restart wg-quick@wgWorker',
+            "sudo systemctl restart wg-quick@wgWorker",
         )
     )
 

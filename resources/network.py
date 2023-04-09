@@ -23,7 +23,10 @@ class Network(pulumi.ComponentResource):
         remote: bool = False,
     ) -> None:
         super().__init__("oracle:network", "oracle:network", props, opts, remote)
-        self.__child_opts = pulumi.ResourceOptions(parent=self)
+        self.__child_opts = pulumi.ResourceOptions(
+            parent=self,
+            delete_before_replace=True,
+        )
         self.__compartment = compartment
         self.__config = node_config
 

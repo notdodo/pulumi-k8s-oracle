@@ -157,8 +157,8 @@ write_files:
       [Interface]
       PrivateKey = ##WIREGUARDPRIVATEKEY##
       Address = 0.0.0.0
-      PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-      PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
+      PostUp = iptables -A FORWARD -i wgMaster -j ACCEPT; iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE
+      PostDown = iptables -D FORWARD -i wgMaster -j ACCEPT; iptables -t nat -D POSTROUTING -o enp0s3 -j MASQUERADE
       ListenPort = 51000
 
       [Peer]
