@@ -8,6 +8,7 @@ config:
   base_domain: thedodo.xyz
   base_stack_ref: notdodo/pulumi-k8s-oracle/
   crio_version: '1.26'
+  cni_cidr: '10.85.0.1/16'
   masters_config:
     - instance_name: k8sMaster
       instance_memory_in_gbs: '24'
