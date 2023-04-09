@@ -141,6 +141,7 @@ write_files:
       PublicKey = ##PEERPUBKEY##
       AllowedIPs = ##ALLOWEDIPS##
       Endpoint = k8s.thedodo.xyz:51000
+      PersistentKeepAlive = 25
 
 packages:
   - cri-o

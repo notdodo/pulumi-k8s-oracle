@@ -165,6 +165,7 @@ write_files:
       PublicKey = ##PEERPUBKEY##
       AllowedIPs = ##ALLOWEDIPS##
       Endpoint = ##PEERIP##:51000
+      PersistentKeepAlive = 25
 
 packages:
   - cri-o
