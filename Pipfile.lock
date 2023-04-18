@@ -119,10 +119,10 @@
         },
         "pulumi": {
             "hashes": [
-                "sha256:0b0bef3d7fd30545860f097b42d6dfd24ad7b144442f93f90064ffdf17c12306"
+                "sha256:379ec4f26b809475cc17bef8ac8b4e089778678afaccd93464306bbf2348aee5"
             ],
             "index": "pypi",
-            "version": "==3.62.0"
+            "version": "==3.63.0"
         },
         "pulumi-cloudflare": {
             "hashes": [
