@@ -43,7 +43,6 @@ class Instance(pulumi.ComponentResource):
                 operating_system_version=self.__node_config[
                     "instance_operating_system_version"
                 ],
-                # shape=self.__node_config["instance_shape"],
                 sort_by="TIMECREATED",
                 sort_order="DESC",
             )
