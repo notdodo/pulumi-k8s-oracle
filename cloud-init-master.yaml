@@ -127,6 +127,7 @@ write_files:
       net.ipv4.ip_forward = 1
       net.bridge.bridge-nf-call-iptables = 1
       net.bridge.bridge-nf-call-ip6tables = 1
+      net.ipv4.conf.all.proxy_arp = 1
   - path: /root/config.yaml
     permissions: '0644'
     content: |
@@ -156,16 +157,18 @@ write_files:
     content: |
       [Interface]
       PrivateKey = ##WIREGUARDPRIVATEKEY##
-      Address = 0.0.0.0
-      PostUp = iptables -A FORWARD -i wgMaster -j ACCEPT; iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE
-      PostDown = iptables -D FORWARD -i wgMaster -j ACCEPT; iptables -t nat -D POSTROUTING -o enp0s3 -j MASQUERADE
+      Address = 10.0.100.1/24
       ListenPort = 51000
 
       [Peer]
       PublicKey = ##PEERPUBKEY##
-      AllowedIPs = ##ALLOWEDIPS##
+      AllowedIPs = 10.0.100.0/24,##ALLOWEDIPS##
       Endpoint = ##PEERIP##:51000
       PersistentKeepAlive = 25
+
+      [Peer]
+      PublicKey = ##MYPUBLICKEY##
+      AllowedIPs = 10.0.100.0/24,##ALLOWEDIPS##
 
 packages:
   - cri-o
@@ -177,10 +180,11 @@ packages:
 
 runcmd:
   - iptables -I INPUT -p tcp -m tcp --match multiport --dports 80,443,6443,10250,51000 -j ACCEPT
-  - systemctl enable --now wg-quick@wgMaster
-  - netfilter-persistent save
+  - systemctl enable wg-quick@wgMaster
+  - iptables -A INPUT -i wgMaster -j ACCEPT
   - sysctl --system
   - systemctl enable --now crio
   - sed -i "s/##MYPUBLICIP##/$(curl ifconfig.me)/g" /root/config.yaml
   - kubeadm config images pull
   - kubeadm init --config /root/config.yaml -v=5
+  - netfilter-persistent save

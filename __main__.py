@@ -71,6 +71,7 @@ user_data_substitutions = {
     "##ALLOWEDIPS##": f"{node_config['instance_subnet_cidr']},{kube_config['pod_subnet']},{config.require('cni_cidr')}",
     "##CRIOVERSION##": config.require("crio_version"),
     "##WIREGUARDPRIVATEKEY##": config.require("wireguard_private_key"),
+    "##MYPUBLICKEY##": node_config.get("my_public_key", ""),
     "##PEERPUBKEY##": not_this_node["peer_public_key"],
 }
 
@@ -119,6 +120,6 @@ else:
         create=pulumi.Output.concat(
             'sudo sed -i "s/##PEERIP##/',
             node.public_ip,
-            '/g" /etc/wireguard/wgMaster.conf; sudo systemctl restart wg-quick@wgMaster',
+            '/g" /etc/wireguard/wgMaster.conf; sudo reboot',
         ),
     )

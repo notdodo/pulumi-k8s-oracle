@@ -8,7 +8,7 @@ config:
   base_domain: thedodo.xyz
   base_stack_ref: notdodo/pulumi-k8s-oracle/
   crio_version: '1.26'
-  cni_cidr: '10.85.0.1/16'
+  cni_cidr: '10.85.0.0/16'
   masters_config:
     - instance_name: k8sMaster
       instance_memory_in_gbs: '24'
@@ -27,6 +27,7 @@ config:
       oci_agent_osmgmtsvc: ENABLED
       oci_agent_vulnerability: DISABLED
       peer_public_key: 'H2/vZFKgl1O0ylxYp5jPfO2D+I2mjmoA/braUp7YVRU='
+      my_public_key: 'qdjCxGiYh4aAWBG8f4aEqZsCR3yVSMiKxDhbITjrhVE='
       vcn_cidr_block: 10.0.0.0/16
       public_ip_enabled: 'true'
       user_data: cloud-init-master.yaml

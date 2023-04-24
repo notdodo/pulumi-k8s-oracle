@@ -20,6 +20,7 @@ class Compartment(pulumi.ComponentResource):
             "{}Compartment".format(name),
             name="{}Compartment".format(name),
             description="Compartment for the free tier",
+            enable_delete=True,
             opts=self.__child_opts,
         )
 
