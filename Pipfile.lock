@@ -140,10 +140,10 @@
         },
         "pulumi-oci": {
             "hashes": [
-                "sha256:6f3db9ea9f8eea28988b23cc4b7238626ec07ef315c6b306f08ac7e010afd1f4"
+                "sha256:9b90b95b2f20a5310c9b61bca5125429c687245b030b6425f55f95803fa8e408"
             ],
             "index": "pypi",
-            "version": "==0.14.0"
+            "version": "==0.15.0"
         },
         "pulumi-tls": {
             "hashes": [
