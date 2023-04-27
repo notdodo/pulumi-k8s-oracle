@@ -120,6 +120,6 @@ else:
         create=pulumi.Output.concat(
             'sudo sed -i "s/##PEERIP##/',
             node.public_ip,
-            '/g" /etc/wireguard/wgMaster.conf; sudo reboot',
+            '/g" /etc/wireguard/wgMaster.conf; sudo wg-quick down wgMaster; sudo wg-quick up wgMaster',
         ),
     )

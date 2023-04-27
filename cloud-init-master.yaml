@@ -148,43 +148,50 @@ write_files:
         certSANs:
           - ##MYPUBLICIP##
           - ##PUBLICDOMAIN##
+          - k8smaster
+          - k8sworker
       ---
-      apiVersion: kubelet.config.k8s.io/v1beta1
-      kind: KubeletConfiguration
-      serverTLSBootstrap: true
+      apiVersion: kubeproxy.config.k8s.io/v1alpha1
+      kind: KubeProxyConfiguration
+      mode: ipvs
   - path: /etc/wireguard/wgMaster.conf
     permissions: '0600'
     content: |
       [Interface]
       PrivateKey = ##WIREGUARDPRIVATEKEY##
-      Address = 10.0.100.1/24
+      Address = 10.0.100.1/32
       ListenPort = 51000
 
       [Peer]
+      # peer: worker
       PublicKey = ##PEERPUBKEY##
       AllowedIPs = 10.0.100.0/24,##ALLOWEDIPS##
       Endpoint = ##PEERIP##:51000
       PersistentKeepAlive = 25
 
       [Peer]
+      # peer: my_laptop
       PublicKey = ##MYPUBLICKEY##
       AllowedIPs = 10.0.100.0/24,##ALLOWEDIPS##
 
 packages:
   - cri-o
   - cri-o-runc
+  - ipset
+  - ipvsadm
   - kubelet
   - kubeadm
   - kubectl
+  - resolvconf
   - wireguard
 
 runcmd:
-  - iptables -I INPUT -p tcp -m tcp --match multiport --dports 80,443,6443,10250,51000 -j ACCEPT
-  - systemctl enable wg-quick@wgMaster
-  - iptables -A INPUT -i wgMaster -j ACCEPT
   - sysctl --system
+  - iptables -I INPUT -p tcp -m tcp --match multiport --dports 80,443,6443,10250 -j ACCEPT
+  - iptables -I INPUT -p udp -m udp --dport 51000 -j ACCEPT
+  - systemctl enable wg-quick@wgMaster
   - systemctl enable --now crio
   - sed -i "s/##MYPUBLICIP##/$(curl ifconfig.me)/g" /root/config.yaml
   - kubeadm config images pull
-  - kubeadm init --config /root/config.yaml -v=5
+  - kubeadm init --config /root/config.yaml
   - netfilter-persistent save

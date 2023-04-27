@@ -148,6 +148,7 @@ class Instance(pulumi.ComponentResource):
             create_vnic_details=oci.core.InstanceCreateVnicDetailsArgs(
                 subnet_id=self.__network.get_subnet().id,
                 assign_public_ip=self.__node_config["public_ip_enabled"],
+                private_ip=self.__node_config["private_ip"],
             ),
             display_name=self.__node_config["instance_name"],
             fault_domain="FAULT-DOMAIN-1",

@@ -29,6 +29,7 @@ config:
       peer_public_key: 'H2/vZFKgl1O0ylxYp5jPfO2D+I2mjmoA/braUp7YVRU='
       my_public_key: 'qdjCxGiYh4aAWBG8f4aEqZsCR3yVSMiKxDhbITjrhVE='
       vcn_cidr_block: 10.0.0.0/16
+      private_ip: 10.0.10.10
       public_ip_enabled: 'true'
       user_data: cloud-init-master.yaml
   workers_config:
@@ -50,6 +51,7 @@ config:
       oci_agent_vulnerability: DISABLED
       peer_public_key: 'c4bxt+MIilAF4a3aZDsrSAjrArU1okX9rkhrFMBTGgA='
       vcn_cidr_block: 10.0.0.0/16
+      private_ip: 10.0.10.11
       public_ip_enabled: 'true'
       user_data: cloud-init-worker.yaml
   kubernetes_config:

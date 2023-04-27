@@ -133,10 +133,11 @@ write_files:
     content: |
       [Interface]
       PrivateKey = ##WIREGUARDPRIVATEKEY##
-      Address = 10.0.100.2/24
+      Address = 10.0.100.2/32
       ListenPort = 51000
 
       [Peer]
+      # peer: master
       PublicKey = ##PEERPUBKEY##
       AllowedIPs = 10.0.100.0/24,##ALLOWEDIPS##
       Endpoint = k8s.thedodo.xyz:51000
@@ -145,13 +146,15 @@ write_files:
 packages:
   - cri-o
   - cri-o-runc
+  - ipset
+  - ipvsadm
   - kubeadm
+  - resolvconf
   - wireguard
 
 runcmd:
-  - iptables -I INPUT -p tcp -m tcp --match multiport --dports 51000 -j ACCEPT
   - sysctl --system
+  - iptables -I INPUT -p udp -m udp --dport 51000 -j ACCEPT
   - systemctl enable --now crio
-  - systemctl enable wg-quick@wgWorker
-  - iptables -A INPUT -i wgWorker -j ACCEPT
+  - systemctl enable --now wg-quick@wgWorker
   - netfilter-persistent save
