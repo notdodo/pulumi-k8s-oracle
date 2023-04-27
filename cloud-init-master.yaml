@@ -169,11 +169,6 @@ write_files:
       Endpoint = ##PEERIP##:51000
       PersistentKeepAlive = 25
 
-      [Peer]
-      # peer: my_laptop
-      PublicKey = ##MYPUBLICKEY##
-      AllowedIPs = 10.0.100.0/24,##ALLOWEDIPS##
-
 packages:
   - cri-o
   - cri-o-runc
