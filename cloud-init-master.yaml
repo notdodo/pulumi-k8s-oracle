@@ -149,10 +149,6 @@ write_files:
           bind-address: 10.0.100.1
         certSANs:
           - 10.0.10.10
-      ---
-      apiVersion: kubeproxy.config.k8s.io/v1alpha1
-      kind: KubeProxyConfiguration
-      mode: ipvs
   - path: /etc/wireguard/wg0.conf
     permissions: '0600'
     content: |
@@ -175,13 +171,10 @@ packages:
   - cri-o
   - cri-o-runc
   - ipset
-  - ipvsadm
   - kubelet
   - kubeadm
   - kubectl
-  # - resolvconf
   - wireguard
-  - vim
 
 runcmd:
   - sysctl --system

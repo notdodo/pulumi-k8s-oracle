@@ -146,11 +146,8 @@ packages:
   - cri-o
   - cri-o-runc
   - ipset
-  - ipvsadm
   - kubeadm
-  # - resolvconf
   - wireguard
-  - vim
 
 runcmd:
   - sysctl --system
