@@ -87,11 +87,6 @@ if "worker" in pulumi.get_stack():
         create="sudo kubeadm token create --print-join-command",
     )
     instance_extra_cmds.append(token.stdout)
-    instance_extra_cmds.append(
-        pulumi.Output.concat(
-            "sudo systemctl restart wg-quick@wgWorker",
-        )
-    )
 
 instance = Instance(
     compartment=compartment,
@@ -120,6 +115,9 @@ else:
         create=pulumi.Output.concat(
             'sudo sed -i "s/##PEERIP##/',
             node.public_ip,
-            '/g" /etc/wireguard/wgMaster.conf; sudo wg-quick down wgMaster; sudo wg-quick up wgMaster',
+            """/g" /etc/wireguard/wg0.conf; \
+            sudo sed -i "s/# //" /etc/wireguard/wg0.conf; \
+            sudo wg-quick down wg0; \
+            sudo wg-quick up wg0""",
         ),
     )

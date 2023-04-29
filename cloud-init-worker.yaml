@@ -128,7 +128,7 @@ write_files:
       net.bridge.bridge-nf-call-iptables = 1
       net.bridge.bridge-nf-call-ip6tables = 1
       net.ipv4.conf.all.proxy_arp = 1
-  - path: /etc/wireguard/wgWorker.conf
+  - path: /etc/wireguard/wg0.conf
     permissions: '0600'
     content: |
       [Interface]
@@ -137,9 +137,8 @@ write_files:
       ListenPort = 51000
 
       [Peer]
-      # peer: master
       PublicKey = ##PEERPUBKEY##
-      AllowedIPs = 10.0.100.0/24,##ALLOWEDIPS##
+      AllowedIPs = 10.0.100.1/32,10.0.10.10/32
       Endpoint = k8s.thedodo.xyz:51000
       PersistentKeepAlive = 25
 
@@ -149,12 +148,14 @@ packages:
   - ipset
   - ipvsadm
   - kubeadm
-  - resolvconf
+  # - resolvconf
   - wireguard
+  - vim
 
 runcmd:
   - sysctl --system
   - iptables -I INPUT -p udp -m udp --dport 51000 -j ACCEPT
+  - systemctl enable --now wg-quick@wg0
+  - iptables -I INPUT -i wg0 -j ACCEPT
   - systemctl enable --now crio
-  - systemctl enable --now wg-quick@wgWorker
   - netfilter-persistent save
