@@ -145,7 +145,6 @@ write_files:
 packages:
   - cri-o
   - cri-o-runc
-  - ipset
   - kubeadm
   - wireguard
 

@@ -149,6 +149,8 @@ write_files:
           bind-address: 10.0.100.1
         certSANs:
           - 10.0.10.10
+          - 10.0.100.1
+          - 10.96.0.1
   - path: /etc/wireguard/wg0.conf
     permissions: '0600'
     content: |
@@ -170,7 +172,6 @@ write_files:
 packages:
   - cri-o
   - cri-o-runc
-  - ipset
   - kubelet
   - kubeadm
   - kubectl
