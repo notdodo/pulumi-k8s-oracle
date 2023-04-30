@@ -26,7 +26,7 @@ The project will setup a single instance with the maximum of specs allowed by th
 
 To connect to the cluster using your device setup a Wireguard configuration:
 
-```toml
+```
 [Interface]
 Address = 10.0.10.100/32
 PrivateKey = <yourMachineWireguardPrivateKey>
