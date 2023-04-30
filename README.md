@@ -22,7 +22,7 @@ The project will setup a single instance with the maximum of specs allowed by th
 
 0. Edit the file `Pulumi.yaml` with the correct information about your instance specifications, network, and domain
 1. Create at least 2 pair of Wireguard private and public key to setup the site-to-site tunnel between nodes (required since we are using at least two different Oracle account)
-2. The cluster will not bind to the external/public IP address so another pair of Wireguard keys is required to access the API server from you machine. 
+2. The cluster will not bind to the external/public IP address so another pair of Wireguard keys is required to access the API server from you machine.
 
 To connect to the cluster using your device setup a Wireguard configuration:
 
@@ -43,7 +43,7 @@ PublicKey = <masterNodeWireguardPublicKey>
 0. Select the stack and the configuration for the master `pulumi stack select master`
 1. Edit the file `Pulumi.master.yaml` with the correct information about your Oracle tenant, names and paths
 2. If you want to customize the Kubernetes setup edit the file `cloud-init-master.yaml` on the section about the Yaml file for `kubeadm`
-3. Run `pulumi up` and wait for the deployment (_N.B._: the network security group allow all ingress and egress traffic; if this is not ideal for you change it. `iptables` is still configured to block some ports)
+3. Run `pulumi up` and wait for the deployment (_N.B._: the network security group allows only ingress for SSH and Wireguard ports; if this is not ideal for you change it as you wish)
 4. Now you can SSH into the machine to fetch the `kubeconfig` file from `/etc/kubernetes/admin.conf` using the SSH keys generate during the `pulumi up` command
 
 #### Worker nodes
@@ -51,7 +51,7 @@ PublicKey = <masterNodeWireguardPublicKey>
 0. Select the stack and the configuration for the worker node `pulumi stack select worker`
 1. Edit the file `Pulumi.worker.yaml` with the correct information about your Oracle tenant, names and paths
 2. If you want to customize the instance setup editi the file `cloud-init-worker.yaml`
-4. Run `pulumi up` and wait for the deployment
+3. Run `pulumi up` and wait for the deployment
 
 ## Troubleshooting
 
