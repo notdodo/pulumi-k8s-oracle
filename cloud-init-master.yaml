@@ -149,8 +149,7 @@ write_files:
           bind-address: 10.0.100.1
         certSANs:
           - 10.0.10.10
-          - 10.0.100.1
-          - 10.96.0.1
+          - k8s.thedodo.xyz
   - path: /etc/wireguard/wg0.conf
     permissions: '0600'
     content: |
