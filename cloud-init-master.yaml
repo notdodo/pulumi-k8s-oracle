@@ -149,7 +149,7 @@ write_files:
           bind-address: 10.0.100.1
         certSANs:
           - 10.0.10.10
-          - k8s.thedodo.xyz
+          - ##PUBLICDOMAIN##
   - path: /etc/wireguard/wg0.conf
     permissions: '0600'
     content: |
@@ -160,11 +160,11 @@ write_files:
 
       [Peer]
       PublicKey = ##MYPUBLICKEY##
-      AllowedIPs = 10.0.100.0/24,10.0.10.0/24
+      AllowedIPs = 10.0.100.0/24,##ALLOWEDIPSCLIENT##
 
       # [Peer]
       # PublicKey = ##PEERPUBKEY##
-      # AllowedIPs = 10.0.100.2/32,10.0.10.11/32
+      # AllowedIPs = 10.0.100.2/32,##ALLOWEDIPS##
       # Endpoint = ##PEERIP##:51000
       # PersistentKeepAlive = 25
 

@@ -138,7 +138,7 @@ write_files:
 
       [Peer]
       PublicKey = ##PEERPUBKEY##
-      AllowedIPs = 10.0.100.1/32,10.0.10.10/32
+      AllowedIPs = 10.0.100.1/32,##ALLOWEDIPS##
       Endpoint = k8s.thedodo.xyz:51000
       PersistentKeepAlive = 25
 

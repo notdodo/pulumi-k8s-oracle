@@ -68,7 +68,8 @@ not_this_node = (
 user_data_substitutions = {
     "##PODSUBNET##": kube_config["pod_subnet"],
     "##PUBLICDOMAIN##": kube_config["domain"],
-    "##ALLOWEDIPS##": f"{node_config['instance_subnet_cidr']},{kube_config['pod_subnet']},{config.require('cni_cidr')}",
+    "##ALLOWEDIPS##": not_this_node["private_ip"],
+    "##ALLOWEDIPSCLIENT##": node_config.get("instance_subnet_cidr"),
     "##CRIOVERSION##": config.require("crio_version"),
     "##WIREGUARDPRIVATEKEY##": config.require("wireguard_private_key"),
     "##MYPUBLICKEY##": node_config.get("my_public_key", ""),
