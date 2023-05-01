@@ -1,6 +1,6 @@
 # pulumi-k8s-oracle
 
-Provisioning of Oracle FreeTier instances for a free K8S cluster
+Provisioning of a Kubernetes cluster on Oracle Cloud FreeTier
 
 Manage the cluster using: https://github.com/notdodo/pulumi-k8s
 
