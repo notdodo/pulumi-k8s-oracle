@@ -14,6 +14,8 @@ Manage the cluster using: https://github.com/notdodo/pulumi-k8s
    1. Also configure [Pulumi with the required secret for Oracle](https://www.pulumi.com/registry/packages/oci/installation-configuration/)
 4. A Cloudflare account with a DNS zone API token
 
+![pulumi_k8s_oracle](https://user-images.githubusercontent.com/6991986/235491523-fdba862a-3118-45f9-bbbe-ae04d0d5284f.png)
+
 ### Provisioning
 
 The project will setup a single instance with the maximum of specs allowed by the Oracle FreeTier; if you have more accounts or want to create a multinode cluster configure the other Oracle accounts in your machine and edit accordingly the `Pulumi.yaml` file.
