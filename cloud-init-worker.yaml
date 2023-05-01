@@ -149,11 +149,12 @@ packages:
   - wireguard
 
 runcmd:
-  # Disabled the following line to stop loggin all droppeg packets
+  # Disable the following line to stop logging all dropped packets
   - iptables -I INPUT -m limit --limit 5/min -j LOG --log-prefix "packet-drop " --log-level 7
-  - sysctl --system
-  - iptables -I INPUT -p udp -m udp --dport 51000 -j ACCEPT
-  - systemctl enable --now wg-quick@wg0
+  - iptables -I INPUT -p udp --dport 51000 -j ACCEPT
+  - iptables -I INPUT -p tcp --match multiport --dports 10250,30000:32767 -j ACCEPT
   - iptables -I INPUT -i wg0 -j ACCEPT
+  - sysctl --system
+  - systemctl enable --now wg-quick@wg0
   - systemctl enable --now crio
   - netfilter-persistent save

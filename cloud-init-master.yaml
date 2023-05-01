@@ -148,8 +148,12 @@ write_files:
         extraArgs:
           bind-address: 10.0.100.1
         certSANs:
-          - 10.0.10.10
+          - ##PRIVATEIP##
           - ##PUBLICDOMAIN##
+      ---
+      apiVersion: kubelet.config.k8s.io/v1beta1
+      kind: KubeletConfiguration
+      serverTLSBootstrap: true
   - path: /etc/wireguard/wg0.conf
     permissions: '0600'
     content: |
@@ -177,13 +181,14 @@ packages:
   - wireguard
 
 runcmd:
-  # Disabled the following line to stop loggin all droppeg packets
+  # Disable the following line to stop logging all dropped packets
   - iptables -I INPUT -m limit --limit 5/min -j LOG --log-prefix "packet-drop " --log-level 7
-  - sysctl --system
   - iptables -I INPUT -p udp -m udp --dport 51000 -j ACCEPT
-  - iptables -I INPUT -p tcp -m tcp --match multiport --dports 6443,2379,2380 -j ACCEPT
-  - systemctl enable --now wg-quick@wg0
+  - iptables -I INPUT -p tcp --match multiport --dports 6443,2379,2380 -j ACCEPT
   - iptables -I INPUT -i wg0 -j ACCEPT
+  - iptables -I INPUT -i lo -j ACCEPT
+  - sysctl --system
+  - systemctl enable --now wg-quick@wg0
   - systemctl enable --now crio
   - kubeadm config images pull
   - kubeadm init --config /root/config.yaml
