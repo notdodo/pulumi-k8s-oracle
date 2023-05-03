@@ -5,7 +5,6 @@ import stat
 import pulumi
 import pulumi_command as pc
 import pulumi_tls
-
 import resources.dns as dns
 from resources.compartment import Compartment
 from resources.instance import Instance

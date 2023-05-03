@@ -3,7 +3,6 @@ from typing import Optional
 
 import pulumi
 import pulumi_oci as oci
-
 from resources.compartment import Compartment
 from resources.network import Network
 

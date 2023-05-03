@@ -1,9 +1,9 @@
-from diagrams import Diagram, Cluster, Edge
-from diagrams.k8s.infra import Master, Node
-from diagrams.generic.network import VPN
-from diagrams.saas.cdn import Cloudflare
-from diagrams.oci.network import SecurityLists
+from diagrams import Cluster, Diagram, Edge
 from diagrams.generic.device import Tablet
+from diagrams.generic.network import VPN
+from diagrams.k8s.infra import Master, Node
+from diagrams.oci.network import SecurityLists
+from diagrams.saas.cdn import Cloudflare
 
 graph_attr = {
     "layout":"dot",
