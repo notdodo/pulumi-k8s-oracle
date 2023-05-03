@@ -184,7 +184,7 @@ runcmd:
   # Disable the following line to stop logging all dropped packets
   - iptables -I INPUT -m limit --limit 5/min -j LOG --log-prefix "packet-drop " --log-level 7
   - iptables -I INPUT -p udp -m udp --dport 51000 -j ACCEPT
-  - iptables -I INPUT -p tcp --match multiport --dports 6443,2379,2380 -j ACCEPT
+  - iptables -I INPUT -p tcp --match multiport --dports 6443,2379,2380,10250 -j ACCEPT
   - iptables -I INPUT -i wg0 -j ACCEPT
   - iptables -I INPUT -i lo -j ACCEPT
   - sysctl --system
