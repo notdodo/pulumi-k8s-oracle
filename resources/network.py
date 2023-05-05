@@ -52,9 +52,9 @@ class Network(pulumi.ComponentResource):
     def create_subnet(self):
         custom_security_list = oci.core.SecurityList(
             compartment_id=self.__compartment.id,
-            resource_name="YOLO",
+            resource_name="k8sVPN",
             vcn_id=self.__vcn.id,
-            display_name="YOLO",
+            display_name="k8sVPN",
             egress_security_rules=[
                 oci.core.SecurityListEgressSecurityRuleArgs(
                     protocol="all",
@@ -70,7 +70,7 @@ class Network(pulumi.ComponentResource):
                         max=51000,
                         min=51000,
                     ),
-                    description="Allow only UDP for Wireguard",
+                    description="Allow in UDP for Wireguard",
                 ),
                 oci.core.SecurityListIngressSecurityRuleArgs(
                     protocol="6",  # tcp
@@ -79,7 +79,7 @@ class Network(pulumi.ComponentResource):
                         max=22,
                         min=22,
                     ),
-                    description="Allow only UDP for Wireguard",
+                    description="Allow in UDP for Wireguard",
                 ),
             ],
             opts=self.__child_opts,
