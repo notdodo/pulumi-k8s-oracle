@@ -2,6 +2,7 @@ from typing import Optional
 
 import pulumi
 import pulumi_oci as oci
+
 from resources.compartment import Compartment
 
 
@@ -79,7 +80,7 @@ class Network(pulumi.ComponentResource):
                         max=22,
                         min=22,
                     ),
-                    description="Allow in UDP for Wireguard",
+                    description="Allow in TCP for SSH",
                 ),
             ],
             opts=self.__child_opts,
