@@ -22,7 +22,7 @@ class Instance(pulumi.ComponentResource):
         self.__node_config = node_config
         super().__init__(
             "oracle:instance",
-            self.__node_config["instance_name"],
+            self.__node_config.get("instance_name"),
             props,
             opts,
             remote,
@@ -39,10 +39,10 @@ class Instance(pulumi.ComponentResource):
         return (
             oci.core.get_images(
                 compartment_id=self.__config.require("tenancy_ocid"),
-                operating_system=self.__node_config["instance_operating_system"],
-                operating_system_version=self.__node_config[
+                operating_system=self.__config.require("instance_operating_system"),
+                operating_system_version=self.__config.require(
                     "instance_operating_system_version"
-                ],
+                ),
                 sort_by="TIMECREATED",
                 sort_order="DESC",
             )
@@ -75,37 +75,37 @@ class Instance(pulumi.ComponentResource):
         return oci.core.InstanceAgentConfigArgs(
             plugins_configs=[
                 oci.core.InstanceAgentConfigPluginsConfigArgs(
-                    desired_state=self.__node_config["oci_agent_vulnerability"],
+                    desired_state=self.__config.require("oci_agent_vulnerability"),
                     name="Vulnerability Scanning",
                 ),
                 oci.core.InstanceAgentConfigPluginsConfigArgs(
-                    desired_state=self.__node_config["oci_agent_osmgmtsvc"],
+                    desired_state=self.__config.require("oci_agent_osmgmtsvc"),
                     name="OS Management Service Agent",
                 ),
                 oci.core.InstanceAgentConfigPluginsConfigArgs(
-                    desired_state=self.__node_config["oci_agent_mgmt"],
+                    desired_state=self.__config.require("oci_agent_mgmt"),
                     name="Management Agent",
                 ),
                 oci.core.InstanceAgentConfigPluginsConfigArgs(
-                    desired_state=self.__node_config["oci_agent_customlogs"],
+                    desired_state=self.__config.require("oci_agent_customlogs"),
                     name="Custom Logs Monitoring",
                 ),
                 oci.core.InstanceAgentConfigPluginsConfigArgs(
-                    desired_state=self.__node_config["oci_agent_comptinstance"],
+                    desired_state=self.__config.require("oci_agent_comptinstance"),
                     name="Compute Instance Run Command",
                 ),
                 oci.core.InstanceAgentConfigPluginsConfigArgs(
-                    desired_state=self.__node_config[
+                    desired_state=self.__config.require(
                         "oci_agent_comptinstancemonitoring"
-                    ],
+                    ),
                     name="Compute Instance Monitoring",
                 ),
                 oci.core.InstanceAgentConfigPluginsConfigArgs(
-                    desired_state=self.__node_config["oci_agent_blkvolume"],
+                    desired_state=self.__config.require("oci_agent_blkvolume"),
                     name="Block Volume Management",
                 ),
                 oci.core.InstanceAgentConfigPluginsConfigArgs(
-                    desired_state=self.__node_config["oci_agent_bastion"],
+                    desired_state=self.__config.require("oci_agent_bastion"),
                     name="Bastion",
                 ),
             ],
@@ -147,7 +147,7 @@ class Instance(pulumi.ComponentResource):
             compartment_id=self.__compartment.id,
             create_vnic_details=oci.core.InstanceCreateVnicDetailsArgs(
                 subnet_id=self.__network.get_subnet().id,
-                assign_public_ip=self.__node_config["public_ip_enabled"],
+                assign_public_ip=self.__config.get("public_ip_enabled"),
                 private_ip=self.__node_config["private_ip"],
             ),
             display_name=self.__node_config["instance_name"],
@@ -156,15 +156,15 @@ class Instance(pulumi.ComponentResource):
                 "user_data": user_data,
                 "ssh_authorized_keys": self.__node_config["public_key"],
             },
-            shape=self.__node_config["instance_shape"],
+            shape=self.__config.require("instance_shape"),
             shape_config=oci.core.InstanceShapeConfigArgs(
-                memory_in_gbs=self.__node_config["instance_memory_in_gbs"],
-                ocpus=self.__node_config["instance_ocpus"],
+                memory_in_gbs=self.__config.require("instance_memory_in_gbs"),
+                ocpus=self.__config.require("instance_ocpus"),
             ),
             source_details=oci.core.InstanceSourceDetailsArgs(
                 source_id=self.__select_image(),
                 source_type="image",
-                boot_volume_size_in_gbs=self.__node_config["instance_volume_in_gbs"],
+                boot_volume_size_in_gbs=self.__config.require("instance_volume_in_gbs"),
             ),
             opts=self.__child_opts,
         )

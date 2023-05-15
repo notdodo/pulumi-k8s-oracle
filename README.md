@@ -55,6 +55,12 @@ PublicKey = <masterNodeWireguardPublicKey>
 2. If you want to customize the instance setup editi the file `cloud-init-worker.yaml`
 3. Run `pulumi up` and wait for the deployment
 
+#### One-liner
+
+```
+pulumi stack select master; pulumi down -f; pulumi up -f; sleep 400; pulumi stack select worker; pulumi down -f; pulumi up -f; ssh -i ssh_priv.key ubuntu@<yourPublicDomainOrIp> 'sudo cat /etc/kubernetes/admin.conf'
+```
+
 ## Troubleshooting
 
 - You can SSH into the nodes using the `ssh_priv.key` generated during the provisioning
@@ -63,3 +69,4 @@ PublicKey = <masterNodeWireguardPublicKey>
 - Use [k9s](https://github.com/derailed/k9s) to debug Kubernetes issues
 - Restart the Wireguard VPN
 - Check the network routes on all machines with `ip route`
+- Check the `dmesg` output

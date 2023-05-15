@@ -1,4 +1,4 @@
-import json  # pyright: reportShadowedImports=false
+import json  # pyright: ignore[reportShadowedImports]
 import os.path
 import stat
 
@@ -20,8 +20,6 @@ if pulumi.get_stack() == "master":
     node_config = json.loads(config.get("masters_config"))[0]
 else:
     node_config = json.loads(config.get("workers_config"))[0]
-kube_config = json.loads(config.require("kubernetes_config"))[0]
-
 
 if not (os.path.exists("ssh_priv.key") and os.path.exists("ssh_pub.key")):
     private_key_resource = pulumi_tls.PrivateKey(
@@ -48,7 +46,8 @@ node_config["public_key"] = public_key
 compartment = Compartment(config.require("compartment_name"))
 network = Network(
     compartment=compartment,
-    node_config=node_config,
+    node_config=config,
+    instance_name=node_config.get("instance_name"),
     opts=pulumi.ResourceOptions(depends_on=compartment),
 )
 
@@ -66,11 +65,11 @@ not_this_node = (
 )
 
 user_data_substitutions = {
-    "##PODSUBNET##": kube_config["pod_subnet"],
+    "##PODSUBNET##": config.require("pod_subnet"),
     "##PRIVATEIP##": node_config.get("private_ip"),
-    "##PUBLICDOMAIN##": kube_config["domain"],
+    "##PUBLICDOMAIN##": config.require("domain"),
     "##ALLOWEDIPS##": f"{not_this_node['private_ip']}/32",
-    "##ALLOWEDIPSCLIENT##": node_config.get("instance_subnet_cidr"),
+    "##ALLOWEDIPSCLIENT##": config.require("instance_subnet_cidr"),
     "##CRIOVERSION##": config.require("crio_version"),
     "##WIREGUARDPRIVATEKEY##": config.require("wireguard_private_key"),
     "##MYPUBLICKEY##": node_config.get("my_public_key", ""),
