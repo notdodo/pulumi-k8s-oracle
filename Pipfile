@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 pulumi = "<4.0.0,>=3.0.0"
 pulumi-oci = "*"
-pulumi-cloudflare = "*"
+pulumi-cloudflare = "5.0.0"
 pulumi-command = "*"
 pulumi-tls = "*"
 
