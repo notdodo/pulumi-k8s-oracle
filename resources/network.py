@@ -53,9 +53,9 @@ class Network(pulumi.ComponentResource):
     def create_subnet(self):
         custom_security_list = oci.core.SecurityList(
             compartment_id=self.__compartment.id,
-            resource_name="k8sVPN",
+            resource_name="k8sSecList",
             vcn_id=self.__vcn.id,
-            display_name="k8sVPN",
+            display_name="k8sSecList",
             egress_security_rules=[
                 oci.core.SecurityListEgressSecurityRuleArgs(
                     protocol="all",
@@ -81,6 +81,15 @@ class Network(pulumi.ComponentResource):
                         min=22,
                     ),
                     description="Allow in TCP for SSH",
+                ),
+                oci.core.SecurityListIngressSecurityRuleArgs(
+                    protocol="6",  # tcp
+                    source="0.0.0.0/0",
+                    tcp_options=oci.core.SecurityListIngressSecurityRuleTcpOptionsArgs(
+                        max=443,
+                        min=443,
+                    ),
+                    description="Allow in TCP for HTTPS",
                 ),
             ],
             opts=self.__child_opts,

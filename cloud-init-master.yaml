@@ -9,7 +9,7 @@ apt:
   preserve_sources_list: true
   sources:
     kubernetes.list:
-      source: 'deb https://apt.kubernetes.io/ kubernetes-xenial main'
+      source: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
       key: |
         -----BEGIN PGP PUBLIC KEY BLOCK-----
 
@@ -68,7 +68,7 @@ apt:
         -----END PGP PUBLIC KEY BLOCK-----
 
     devel:kubic:libcontainers:stable.list:
-      source: 'deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_22.04/ /'
+      source: "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_22.04/ /"
       key: |
         -----BEGIN PGP PUBLIC KEY BLOCK-----
         Version: GnuPG v1.4.5 (GNU/Linux)
@@ -93,7 +93,7 @@ apt:
         -----END PGP PUBLIC KEY BLOCK-----
 
     devel:kubic:libcontainers:stable:cri-o:##CRIOVERSION##.list:
-      source: 'deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/##CRIOVERSION##/xUbuntu_22.04/ /'
+      source: "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/##CRIOVERSION##/xUbuntu_22.04/ /"
       key: |
         -----BEGIN PGP PUBLIC KEY BLOCK-----
         Version: GnuPG v1.4.5 (GNU/Linux)
@@ -129,7 +129,7 @@ write_files:
       net.bridge.bridge-nf-call-ip6tables = 1
       net.ipv4.conf.all.proxy_arp = 1
   - path: /root/config.yaml
-    permissions: '0644'
+    permissions: "0644"
     content: |
       apiVersion: kubeadm.k8s.io/v1beta3
       kind: InitConfiguration
@@ -155,7 +155,7 @@ write_files:
       kind: KubeletConfiguration
       serverTLSBootstrap: true
   - path: /etc/wireguard/wg0.conf
-    permissions: '0600'
+    permissions: "0600"
     content: |
       [Interface]
       PrivateKey = ##WIREGUARDPRIVATEKEY##
@@ -184,7 +184,7 @@ runcmd:
   # Disable the following line to stop logging all dropped packets
   - iptables -I INPUT -m limit --limit 5/min -j LOG --log-prefix "packet-drop " --log-level 7
   - iptables -I INPUT -p udp -m udp --dport 51000 -j ACCEPT
-  - iptables -I INPUT -p tcp --match multiport --dports 6443,2379,2380,10250 -j ACCEPT
+  - iptables -I INPUT -p tcp --match multiport --dports 443,6443,2379,2380,10250 -j ACCEPT
   - iptables -I INPUT -i wg0 -j ACCEPT
   - iptables -I INPUT -i lo -j ACCEPT
   - sysctl --system
