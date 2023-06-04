@@ -91,6 +91,15 @@ class Network(pulumi.ComponentResource):
                     ),
                     description="Allow in TCP for HTTPS",
                 ),
+                oci.core.SecurityListIngressSecurityRuleArgs(
+                    protocol="6",  # tcp
+                    source="0.0.0.0/0",
+                    tcp_options=oci.core.SecurityListIngressSecurityRuleTcpOptionsArgs(
+                        max=80,
+                        min=80,
+                    ),
+                    description="Allow in TCP for HTTPS",
+                ),
             ],
             opts=self.__child_opts,
         )

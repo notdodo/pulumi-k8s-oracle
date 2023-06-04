@@ -7,17 +7,17 @@ runtime:
 config:
   base_domain: thedodo.xyz
   base_stack_ref: notdodo/pulumi-k8s-oracle/
-  crio_version: '1.26'
+  crio_version: "1.27"
   domain: k8s.thedodo.xyz
-  cni_cidr: '10.85.0.0/16'
+  cni_cidr: "10.85.0.0/16"
   pod_subnet: 10.123.0.0/16
-  instance_memory_in_gbs: '24'
-  instance_ocpus: '4'
+  instance_memory_in_gbs: "24"
+  instance_ocpus: "4"
   instance_operating_system: Canonical Ubuntu
   instance_shape: VM.Standard.A1.Flex
   instance_subnet_cidr: 10.0.10.0/24
-  instance_operating_system_version: '22.04 Minimal aarch64'
-  instance_volume_in_gbs: '200'
+  instance_operating_system_version: "22.04 Minimal aarch64"
+  instance_volume_in_gbs: "200"
   oci_agent_bastion: DISABLED
   oci_agent_blkvolume: DISABLED
   oci_agent_comptinstance: ENABLED
@@ -26,16 +26,16 @@ config:
   oci_agent_mgmt: DISABLED
   oci_agent_osmgmtsvc: ENABLED
   oci_agent_vulnerability: DISABLED
-  public_ip_enabled: 'true'
+  public_ip_enabled: "true"
   vcn_cidr_block: 10.0.0.0/16
   masters_config:
     - instance_name: K8SMaster
-      peer_public_key: 'H2/vZFKgl1O0ylxYp5jPfO2D+I2mjmoA/braUp7YVRU='
-      my_public_key: 'qdjCxGiYh4aAWBG8f4aEqZsCR3yVSMiKxDhbITjrhVE='
+      peer_public_key: "H2/vZFKgl1O0ylxYp5jPfO2D+I2mjmoA/braUp7YVRU="
+      my_public_key: "qdjCxGiYh4aAWBG8f4aEqZsCR3yVSMiKxDhbITjrhVE="
       private_ip: 10.0.10.10
       user_data: cloud-init-master.yaml
   workers_config:
     - instance_name: K8SWorker
-      peer_public_key: 'c4bxt+MIilAF4a3aZDsrSAjrArU1okX9rkhrFMBTGgA='
+      peer_public_key: "c4bxt+MIilAF4a3aZDsrSAjrArU1okX9rkhrFMBTGgA="
       private_ip: 10.0.10.11
       user_data: cloud-init-worker.yaml
