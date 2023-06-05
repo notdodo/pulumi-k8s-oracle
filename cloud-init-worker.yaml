@@ -9,7 +9,7 @@ apt:
   preserve_sources_list: true
   sources:
     kubernetes.list:
-      source: 'deb https://apt.kubernetes.io/ kubernetes-xenial main'
+      source: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
       key: |
         -----BEGIN PGP PUBLIC KEY BLOCK-----
 
@@ -68,7 +68,7 @@ apt:
         -----END PGP PUBLIC KEY BLOCK-----
 
     devel:kubic:libcontainers:stable.list:
-      source: 'deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_22.04/ /'
+      source: "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_22.04/ /"
       key: |
         -----BEGIN PGP PUBLIC KEY BLOCK-----
         Version: GnuPG v1.4.5 (GNU/Linux)
@@ -93,7 +93,7 @@ apt:
         -----END PGP PUBLIC KEY BLOCK-----
 
     devel:kubic:libcontainers:stable:cri-o:##CRIOVERSION##.list:
-      source: 'deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/##CRIOVERSION##/xUbuntu_22.04/ /'
+      source: "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/##CRIOVERSION##/xUbuntu_22.04/ /"
       key: |
         -----BEGIN PGP PUBLIC KEY BLOCK-----
         Version: GnuPG v1.4.5 (GNU/Linux)
@@ -129,7 +129,7 @@ write_files:
       net.bridge.bridge-nf-call-ip6tables = 1
       net.ipv4.conf.all.proxy_arp = 1
   - path: /etc/wireguard/wg0.conf
-    permissions: '0600'
+    permissions: "0600"
     content: |
       [Interface]
       PrivateKey = ##WIREGUARDPRIVATEKEY##

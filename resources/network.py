@@ -98,7 +98,7 @@ class Network(pulumi.ComponentResource):
                         max=80,
                         min=80,
                     ),
-                    description="Allow in TCP for HTTPS",
+                    description="Allow in TCP for HTTP",
                 ),
             ],
             opts=self.__child_opts,
