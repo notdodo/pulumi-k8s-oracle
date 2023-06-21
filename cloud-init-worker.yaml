@@ -139,7 +139,7 @@ write_files:
       [Peer]
       PublicKey = ##PEERPUBKEY##
       AllowedIPs = 10.0.100.1/32,##ALLOWEDIPS##
-      Endpoint = k8s.thedodo.xyz:51000
+      Endpoint = ##PEERIP##:51000
       PersistentKeepAlive = 25
 
 packages:

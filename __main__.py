@@ -1,5 +1,5 @@
 import json  # pyright: ignore[reportShadowedImports]
-import os.path
+import os
 import stat
 
 import pulumi
@@ -57,6 +57,7 @@ network.create_internet_gateway()
 network.create_route_table()
 
 instance_extra_cmds = []
+master_ip = ""
 
 not_this_node = (
     json.loads(config.get("workers_config"))[0]
@@ -77,9 +78,11 @@ user_data_substitutions = {
 }
 
 if "worker" in pulumi.get_stack():
+    master_ip = json.loads(os.popen('pulumi stack output -s master -j').read()).get("instance_ip")
+    user_data_substitutions["##PEERIP##"] = master_ip
     connection = pc.remote.ConnectionArgs(
         user="ubuntu",
-        host="k8s.thedodo.xyz",
+        host=master_ip,
         private_key=open("ssh_priv.key", "r").read(),
     )
     token = pc.remote.Command(
@@ -107,7 +110,7 @@ if "master" in pulumi.get_stack():
 else:
     connection = pc.remote.ConnectionArgs(
         user="ubuntu",
-        host="k8s.thedodo.xyz",
+        host=master_ip,
         private_key=open("ssh_priv.key", "r").read(),
     )
     pc.remote.Command(
