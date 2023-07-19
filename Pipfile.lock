@@ -18,10 +18,10 @@
     "default": {
         "arpeggio": {
             "hashes": [
-                "sha256:448e332deb0e9ccd04046f1c6c14529d197f41bc2fdb3931e43fc209042fbdd3",
-                "sha256:d6b03839019bb8a68785f9292ee6a36b1954eb84b925b84a6b8a5e1e26d3ed3d"
+                "sha256:c790b2b06e226d2dd468e4fbfb5b7f506cec66416031fde1441cf1de2a0ba700",
+                "sha256:f7c8ae4f4056a89e020c24c7202ac8df3e2bc84e416746f20b0da35bb1de0250"
             ],
-            "version": "==2.0.0"
+            "version": "==2.0.2"
         },
         "attrs": {
             "hashes": [
@@ -140,10 +140,10 @@
         },
         "pulumi-oci": {
             "hashes": [
-                "sha256:7de606aa85b86f3b6c5a6e3303625d1f69d14dc416ebbae1a08e7348e064cde7"
+                "sha256:d284c89a4955f39ecdbbaf183c2d43ef9cf406a11470dda6f29e1fa1e2e13246"
             ],
             "index": "pypi",
-            "version": "==1.2.0"
+            "version": "==1.3.0"
         },
         "pulumi-tls": {
             "hashes": [
