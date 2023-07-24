@@ -33,11 +33,11 @@
         },
         "dill": {
             "hashes": [
-                "sha256:a07ffd2351b8c678dfc4a856a3005f8067aea51d6ba6c700796a4d9e280f39f0",
-                "sha256:e5db55f3687856d8fbdab002ed78544e1c4559a130302693d839dfe8f93f2373"
+                "sha256:76b122c08ef4ce2eedcd4d1abd8e641114bfc6c2867f49f3c41facf65bf19f5e",
+                "sha256:cc1c8b182eb3013e24bd475ff2e9295af86c1a38eb1aff128dac8962a9ce3c03"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==0.3.6"
+            "version": "==0.3.7"
         },
         "grpcio": {
             "hashes": [
@@ -119,10 +119,10 @@
         },
         "pulumi": {
             "hashes": [
-                "sha256:80c3fe608e2f3ddb90b4820df38a39b03a32d511330f1a7093843695a3f6bf77"
+                "sha256:9acf152850a3427ab32e63aaeb8be0a115343a656163d1a2ea4fc548dc3b4f28"
             ],
             "index": "pypi",
-            "version": "==3.75.0"
+            "version": "==3.76.0"
         },
         "pulumi-cloudflare": {
             "hashes": [
