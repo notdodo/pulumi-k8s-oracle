@@ -134,19 +134,19 @@ write_files:
       apiVersion: kubeadm.k8s.io/v1beta3
       kind: InitConfiguration
       localAPIEndpoint:
-        advertiseAddress: 10.0.100.1
+        advertiseAddress: ##PUBLICDOMAIN##
       nodeRegistration:
         taints: []
       ---
       apiVersion: kubeadm.k8s.io/v1beta3
       kind: ClusterConfiguration
-      controlPlaneEndpoint: 10.0.100.1
+      controlPlaneEndpoint: ##PUBLICDOMAIN##
       networking:
         dnsDomain: cluster.local
         podSubnet: ##PODSUBNET##
       apiServer:
         extraArgs:
-          bind-address: 10.0.100.1
+          bind-address: 0.0.0.0
         certSANs:
           - ##PRIVATEIP##
           - ##PUBLICDOMAIN##
@@ -187,9 +187,9 @@ runcmd:
   - iptables -I INPUT -p tcp --match multiport --dports 80,443,6443,2379,2380,10250 -j ACCEPT
   - iptables -I INPUT -i wg0 -j ACCEPT
   - iptables -I INPUT -i lo -j ACCEPT
+  - netfilter-persistent save
   - sysctl --system
-  - systemctl enable --now wg-quick@wg0
+  # - systemctl enable --now wg-quick@wg0
   - systemctl enable --now crio
   - kubeadm config images pull
   - kubeadm init --config /root/config.yaml
-  - netfilter-persistent save
