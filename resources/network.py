@@ -65,36 +65,10 @@ class Network(pulumi.ComponentResource):
             ],
             ingress_security_rules=[
                 oci.core.SecurityListIngressSecurityRuleArgs(
-                    protocol="17",  # udp
+                    protocol="all",
                     source="0.0.0.0/0",
-                    udp_options=oci.core.SecurityListIngressSecurityRuleUdpOptionsArgs(
-                        max=51000,
-                        min=51000,
-                    ),
-                    description="Allow in UDP for Wireguard",
-                ),
-                oci.core.SecurityListIngressSecurityRuleArgs(
-                    protocol="6",  # tcp
-                    source="0.0.0.0/0",
-                    tcp_options=oci.core.SecurityListIngressSecurityRuleTcpOptionsArgs(
-                        max=22,
-                        min=22,
-                    ),
-                    description="Allow in TCP for SSH",
-                ),
-                oci.core.SecurityListIngressSecurityRuleArgs(
-                    protocol="6",  # tcp
-                    source="0.0.0.0/0",
-                    tcp_options=oci.core.SecurityListIngressSecurityRuleTcpOptionsArgs(
-                        max=443,
-                        min=443,
-                    ),
-                    description="Allow in TCP for HTTPS",
-                ),
-                oci.core.SecurityListIngressSecurityRuleArgs(
-                    protocol="all",  # tcp
-                    source="0.0.0.0/0",
-                ),
+                    description="YOLO",
+                )
             ],
             opts=self.__child_opts,
         )

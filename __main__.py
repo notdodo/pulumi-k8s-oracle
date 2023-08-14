@@ -68,13 +68,8 @@ not_this_node = (
 user_data_substitutions = {
     "##PODSUBNET##": config.require("pod_subnet"),
     "##PRIVATEIP##": node_config.get("private_ip"),
-    "##PUBLICDOMAIN##": config.require("domain"),
-    "##ALLOWEDIPS##": f"{not_this_node['private_ip']}/32",
-    "##ALLOWEDIPSCLIENT##": config.require("instance_subnet_cidr"),
+    "##PUBLICDOMAIN##": f"k8s.{config.require('base_domain')}",
     "##CRIOVERSION##": config.require("crio_version"),
-    "##WIREGUARDPRIVATEKEY##": config.require("wireguard_private_key"),
-    "##MYPUBLICKEY##": node_config.get("my_public_key", ""),
-    "##PEERPUBKEY##": not_this_node["peer_public_key"],
 }
 
 if "worker" in pulumi.get_stack():
@@ -107,21 +102,3 @@ outputs(node)
 
 if "master" in pulumi.get_stack():
     dns.create_dns_records(node.public_ip)
-else:
-    connection = pc.remote.ConnectionArgs(
-        user="ubuntu",
-        host=master_ip,
-        private_key=open("ssh_priv.key", "r").read(),
-    )
-    pc.remote.Command(
-        "workerIP",
-        connection=connection,
-        create=pulumi.Output.concat(
-            'sudo sed -i "s/##PEERIP##/',
-            node.public_ip,
-            """/g" /etc/wireguard/wg0.conf; \
-            sudo sed -i "s/# //" /etc/wireguard/wg0.conf; \
-            sudo wg-quick down wg0; \
-            sudo wg-quick up wg0""",
-        ),
-    )
