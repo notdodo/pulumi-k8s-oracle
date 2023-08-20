@@ -128,18 +128,33 @@ write_files:
       net.bridge.bridge-nf-call-iptables = 1
       net.bridge.bridge-nf-call-ip6tables = 1
       net.ipv4.conf.all.proxy_arp = 1
+  - path: /etc/wireguard/wg0.conf
+    permissions: "0600"
+    content: |
+      [Interface]
+      PrivateKey = ##WIREGUARDPRIVATEKEY##
+      Address = 10.0.0.2/32
+      ListenPort = 51000
+
+      [Peer]
+      PublicKey = ##PEERPUBKEY##
+      Endpoint = ##PEERIP##:51000
+      AllowedIPs = 10.0.100.0/24,10.0.0.1/32,##PODSUBNET##,##SERVICESUBNET##
 
 packages:
   - cri-o
   - cri-o-runc
   - kubeadm
+  - wireguard
 
 runcmd:
   # Disable the following line to stop logging all dropped packets
   - iptables -I INPUT -m limit --limit 5/min -j LOG --log-prefix "packet-drop " --log-level 7
-  - iptables -I INPUT -p tcp --match multiport --dports 10250,30000:32767 -j ACCEPT
-  - curl -fsSL https://tailscale.com/install.sh | sh
-  - tailscale up --authkey tskey-auth-kyEUe32CNTRL-ZbHrLWE4waKvcxFr7PYxaKaFqNACKyuk --accept-routes
+    - iptables -I INPUT -p tcp --match multiport --dports 10250 -j ACCEPT
+  - iptables -I INPUT -p udp -m udp --dport 51000 -j ACCEPT
+  - iptables -I INPUT -i wg0 -j ACCEPT
+  - iptables -I INPUT -i lo -j ACCEPT
+  - netfilter-persistent save
+  - systemctl enable --now wg-quick@wg0
   - sysctl --system
   - systemctl enable --now crio
-  - netfilter-persistent save

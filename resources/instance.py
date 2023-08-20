@@ -13,16 +13,16 @@ class Instance(pulumi.ComponentResource):
         self,
         compartment: Compartment,
         network: Network,
-        node_config: dict,
+        node_config: pulumi.Config,
+        public_key: str,
         props: Optional[pulumi.Inputs] = None,
         opts: Optional[pulumi.ResourceOptions] = None,
         remote: bool = False,
     ) -> None:
         self.__config = pulumi.Config()
-        self.__node_config = node_config
         super().__init__(
             "oracle:instance",
-            self.__node_config.get("instance_name"),
+            self.__config.require("instance_name"),
             props,
             opts,
             remote,
@@ -34,6 +34,7 @@ class Instance(pulumi.ComponentResource):
         )
         self.__compartment = compartment
         self.__network = network
+        self.__public_key = public_key
 
     def __select_image(self) -> str:
         return (
@@ -112,11 +113,7 @@ class Instance(pulumi.ComponentResource):
         )
 
     def __generate_user_data(self, extra_cmds: list = [], substitutions: dict = {}):
-        user_data_plain = pulumi.Output.from_input(
-            open(self.__node_config["user_data"]).read()
-        )
-
-        user_data_plain = open(self.__node_config["user_data"]).read()
+        user_data_plain = open(self.__config.require("user_data")).read()
 
         for k, v in substitutions.items():
             user_data_plain = user_data_plain.replace(k, v)
@@ -138,7 +135,7 @@ class Instance(pulumi.ComponentResource):
         )
 
         self.instance = oci.core.Instance(
-            self.__node_config["instance_name"],
+            self.__config.require("instance_name"),
             instance_options=oci.core.InstanceConfigurationInstanceDetailsLaunchDetailsInstanceOptionsArgs(
                 are_legacy_imds_endpoints_disabled=True
             ),
@@ -148,13 +145,13 @@ class Instance(pulumi.ComponentResource):
             create_vnic_details=oci.core.InstanceCreateVnicDetailsArgs(
                 subnet_id=self.__network.get_subnet().id,
                 assign_public_ip=self.__config.get("public_ip_enabled"),
-                private_ip=self.__node_config["private_ip"],
+                private_ip=self.__config.require("private_ip"),
             ),
-            display_name=self.__node_config["instance_name"],
+            display_name=self.__config.require("instance_name"),
             fault_domain="FAULT-DOMAIN-1",
             metadata={
                 "user_data": user_data,
-                "ssh_authorized_keys": self.__node_config["public_key"],
+                "ssh_authorized_keys": self.__public_key,
             },
             shape=self.__config.require("instance_shape"),
             shape_config=oci.core.InstanceShapeConfigArgs(

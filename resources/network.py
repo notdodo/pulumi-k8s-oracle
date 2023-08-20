@@ -17,8 +17,7 @@ class Network(pulumi.ComponentResource):
     def __init__(
         self,
         compartment: Compartment,
-        node_config: dict,
-        instance_name: str,
+        node_config: pulumi.Config,
         props: Optional[pulumi.Inputs] = None,
         opts: Optional[pulumi.ResourceOptions] = None,
         remote: bool = False,
@@ -30,7 +29,7 @@ class Network(pulumi.ComponentResource):
         )
         self.__compartment = compartment
         self.__config = node_config
-        self.instance_name = instance_name
+        self.instance_name = node_config.require("instance_name")
 
     def create_vcn(self):
         self.__vcn = oci.core.Vcn(
