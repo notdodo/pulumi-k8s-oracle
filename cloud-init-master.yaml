@@ -118,6 +118,12 @@ apt:
         -----END PGP PUBLIC KEY BLOCK-----
 
 write_files:
+  - path: /etc/hosts
+    append: true
+    content: |
+      127.0.0.1 k8smaster K8SMaster
+      ##PRIVATEIP## k8smaster K8SMaster
+      10.0.200.10 k8sworker K8SWorker
   - path: /etc/modules-load.d/k8s.conf
     content: |
       overlay
@@ -181,13 +187,16 @@ packages:
 runcmd:
   # Disable the following line to stop logging all dropped packets
   - iptables -I INPUT -m limit --limit 5/min -j LOG --log-prefix "packet-drop " --log-level 7
+  - iptables-save | grep -v "DROP" | grep -v "REJECT" > /tmp/iptables-rules
+  - iptables-restore < /tmp/iptables-rules
   - iptables -I INPUT -p tcp --match multiport --dports 6443,10250 -j ACCEPT
   - iptables -I INPUT -p udp -m udp --dport 51000 -j ACCEPT
   - iptables -I INPUT -i wg0 -j ACCEPT
   - iptables -I INPUT -i lo -j ACCEPT
   - netfilter-persistent save
-  - systemctl enable --now wg-quick@wg0
-  - sysctl --system
+  - systemctl restart iptables
+  - systemctl enable wg-quick@wg0
   - systemctl enable --now crio
+  - sysctl --system
   - kubeadm config images pull
   - kubeadm init --config /root/config.yaml --upload-certs

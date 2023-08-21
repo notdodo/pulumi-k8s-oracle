@@ -64,10 +64,50 @@ class Network(pulumi.ComponentResource):
             ],
             ingress_security_rules=[
                 oci.core.SecurityListIngressSecurityRuleArgs(
-                    protocol="all",
+                    protocol="6",
                     source="0.0.0.0/0",
-                    description="YOLO",
-                )
+                    description="Wireguard VPN",
+                    tcp_options=oci.core.SecurityListIngressSecurityRuleTcpOptionsArgs(
+                        max="22",
+                        min="22",
+                    ),
+                ),
+                oci.core.SecurityListIngressSecurityRuleArgs(
+                    protocol="17",
+                    source="0.0.0.0/0",
+                    description="Wireguard VPN",
+                    udp_options=oci.core.SecurityListIngressSecurityRuleUdpOptionsArgs(
+                        max="51000",
+                        min="51000",
+                    ),
+                ),
+                oci.core.SecurityListIngressSecurityRuleArgs(
+                    protocol="6",
+                    source="0.0.0.0/0",
+                    description="Kubeserver",
+                    tcp_options=oci.core.SecurityListIngressSecurityRuleTcpOptionsArgs(
+                        max="6443",
+                        min="6443",
+                    ),
+                ),
+                oci.core.SecurityListIngressSecurityRuleArgs(
+                    protocol="6",
+                    source="0.0.0.0/0",
+                    description="HTTPS",
+                    tcp_options=oci.core.SecurityListIngressSecurityRuleTcpOptionsArgs(
+                        max="443",
+                        min="443",
+                    ),
+                ),
+                oci.core.SecurityListIngressSecurityRuleArgs(
+                    protocol="6",
+                    source="0.0.0.0/0",
+                    description="HTTP",
+                    tcp_options=oci.core.SecurityListIngressSecurityRuleTcpOptionsArgs(
+                        max="80",
+                        min="80",
+                    ),
+                ),
             ],
             opts=self.__child_opts,
         )
@@ -95,7 +135,6 @@ class Network(pulumi.ComponentResource):
                 oci.core.RouteTableRouteRuleArgs(
                     network_entity_id=self.__internet_gateway.id,
                     destination="0.0.0.0/0",
-                    destination_type="CIDR_BLOCK",
                 )
             ],
             manage_default_resource_id=self.__subnet.route_table_id,

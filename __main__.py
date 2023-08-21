@@ -57,7 +57,7 @@ user_data_substitutions = {
     "##PUBLICDOMAIN##": f"k8s.{config.require('base_domain')}",
     "##SERVICESUBNET##": config.require("service_subnet"),
     "##WIREGUARDPRIVATEKEY##": config.require("wireguard_private_key"),
-    "##PEERPUBKEY##": config.require("wireguard_peer_public_key"),    
+    "##PEERPUBKEY##": config.require("wireguard_peer_public_key"),
 }
 
 if "worker" in pulumi.get_stack():
@@ -104,7 +104,7 @@ if "worker" in pulumi.get_stack():
         private_key=open("ssh_priv.key", "r").read(),
     )
     pc.remote.Command(
-        "workerIP",
+        "set-worker-ip-on-master-wg0",
         connection=connection,
         create=pulumi.Output.concat(
             'sudo sed -i "s/##PEERIP##/',

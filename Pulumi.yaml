@@ -5,6 +5,8 @@ runtime:
   options:
     virtualenv: .venv
 config:
+  base_domain: thedodo.xyz
+  base_stack_ref: notdodo/pulumi-k8s-oracle/
   cloudflare_zone_id: cec5bf01afed114303a536c264a1f394
   cloudflare_record_names:
     - name: k8s
@@ -13,12 +15,8 @@ config:
       proxy: true
     - name: elk
       proxy: true
-  base_domain: thedodo.xyz
-  base_stack_ref: notdodo/pulumi-k8s-oracle/
   crio_version: "1.27"
   cni_cidr: 10.85.0.0/16
-  pod_subnet: 10.123.0.0/16
-  service_subnet: 10.96.0.0/12
   instance_memory_in_gbs: 24
   instance_ocpus: 4
   instance_operating_system: Canonical Ubuntu
@@ -29,9 +27,11 @@ config:
   oci_agent_blkvolume: DISABLED
   oci_agent_comptinstance: ENABLED
   oci_agent_comptinstancemonitoring: ENABLED
-  oci_agent_customlogs: ENABLED
+  oci_agent_customlogs: DISABLED
   oci_agent_mgmt: DISABLED
   oci_agent_osmgmtsvc: ENABLED
-  oci_agent_vulnerability: DISABLED
+  oci_agent_vulnerability: ENABLED
+  pod_subnet: 10.123.0.0/16
   public_ip_enabled: true
+  service_subnet: 10.96.0.0/12
   vcn_cidr_block: 10.0.0.0/16
