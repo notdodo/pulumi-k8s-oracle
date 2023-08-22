@@ -70,12 +70,22 @@ if "worker" in pulumi.get_stack():
         host=master_ip,
         private_key=open("ssh_priv.key", "r").read(),
     )
-    token = pc.remote.Command(
-        "kubadmToken",
-        connection=connection,
-        create="sudo kubeadm token create --print-join-command",
-    )
-    instance_extra_cmds.append(token.stdout)
+    join_cmd = ""
+    if config.get_bool("is_new_control_plane"):
+        join_cmd = pc.remote.Command(
+            "JoinCommand",
+            connection=connection,
+            create="echo $(sudo kubeadm token create --print-join-command) " +
+                   "--control-plane --certificate-key $(sudo kubeadm init phase " +
+                   "upload-certs --upload-certs | grep -vw -e certificate -e Namespace)",
+        )
+    else:
+        join_cmd = pc.remote.Command(
+            "JoinCommand",
+            connection=connection,
+            create="sudo kubeadm token create --print-join-command",
+        )
+    instance_extra_cmds.append(join_cmd.stdout)
 
 
 instance = Instance(
@@ -93,7 +103,11 @@ outputs(node)
 
 
 for dns in json.loads(config.require("cloudflare_record_names")):
-    if dns.get("name") == "k8s" and "worker" in pulumi.get_stack():
+    if (
+        dns.get("name") == "k8s"
+        and "worker" in pulumi.get_stack()
+        and not config.get_bool("is_new_control_plane")
+    ):
         continue
     cloudflare.create_dns_records(node.public_ip, dns)
 

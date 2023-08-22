@@ -9,6 +9,7 @@ pulumi-oci = "*"
 pulumi-cloudflare = "*"
 pulumi-command = "*"
 pulumi-tls = "*"
+requests = "*"
 
 [dev-packages]
 flake8 = "*"

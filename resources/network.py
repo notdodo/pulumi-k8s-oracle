@@ -2,6 +2,7 @@ from typing import Optional
 
 import pulumi
 import pulumi_oci as oci
+from requests import get
 
 from resources.compartment import Compartment
 
@@ -30,6 +31,9 @@ class Network(pulumi.ComponentResource):
         self.__compartment = compartment
         self.__config = node_config
         self.instance_name = node_config.require("instance_name")
+
+    def my_public_ip(self):
+        return get("https://ifconfig.me").content.decode("utf8")
 
     def create_vcn(self):
         self.__vcn = oci.core.Vcn(
@@ -83,7 +87,7 @@ class Network(pulumi.ComponentResource):
                 ),
                 oci.core.SecurityListIngressSecurityRuleArgs(
                     protocol="6",
-                    source="0.0.0.0/0",
+                    source=f"{self.my_public_ip()}/32",
                     description="Kubeserver",
                     tcp_options=oci.core.SecurityListIngressSecurityRuleTcpOptionsArgs(
                         max="6443",
