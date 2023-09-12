@@ -2,128 +2,29 @@
 package_upgrade: true
 package_reboot_if_required: true
 
-# bootcmd:
-# - [cloud-init-per, once, addpartition, sgdisk, /dev/sda, '-e', '-n=0:25G:0', -t, '0:8300']
-
 apt:
   preserve_sources_list: true
   sources:
     kubernetes.list:
-      source: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
-      key: |
-        -----BEGIN PGP PUBLIC KEY BLOCK-----
+      keyid: A362B822F6DEDC652817EA46B53DC80D13EDEF05
+      source: "deb [signed-by=$KEY_FILE] https://packages.cloud.google.com/apt/ kubernetes-xenial main"
 
-        mQENBGKItdQBCADWmKTNZEYWgXy73FvKFY5fRro4tGNa4Be4TZW3wZpct9Cj8Ejy
-        kU7S9EPoJ3EdKpxFltHRu7QbDi6LWSNA4XxwnudQrYGxnxx6Ru1KBHFxHhLfWsvF
-        cGMwit/znpxtIt9UzqCm2YTEW5NUnzQ4rXYqVQK2FLG4weYJ5bKwkY+ZsnRJpzxd
-        HGJ0pBiqwkMT8bfQdJymUBown+SeuQ2HEqfjVMsIRe0dweD2PHWeWo9fTXsz1Q5a
-        biGckyOVyoN9//DgSvLUocUcZsrWvYPaN+o8lXTO3GYFGNVsx069rxarkeCjOpiQ
-        OWrQmywXISQudcusSgmmgfsRZYW7FDBy5MQrABEBAAG0UVJhcHR1cmUgQXV0b21h
-        dGljIFNpZ25pbmcgS2V5IChjbG91ZC1yYXB0dXJlLXNpZ25pbmcta2V5LTIwMjIt
-        MDMtMDctMDhfMDFfMDEucHViKYkBIgQTAQgAFgUCYoi11AkQtT3IDRPt7wUCGwMC
-        GQEAAMGoB/98QBNIIN3Q2D3aahrfkb6axd55zOwR0tnriuJRoPHoNuorOpCv9aWM
-        MvQACNWkxsvJxEF8OUbzhSYjAR534RDigjTetjK2i2wKLz/kJjZbuF4ZXMynCm40
-        eVm1XZqU63U9XR2RxmXppyNpMqQO9LrzGEnNJuh23icaZY6no12axymxcle/+SCm
-        da8oDAfa0iyA2iyg/eU05buZv54MC6RB13QtS+8vOrKDGr7RYp/VYvQzYWm+ck6D
-        vlaVX6VB51BkLl23SQknyZIJBVPm8ttU65EyrrgG1jLLHFXDUqJ/RpNKq+PCzWiy
-        t4uy3AfXK89RczLu3uxiD0CQI0T31u/IuQENBGKItdQBCADIMMJdRcg0Phv7+CrZ
-        z3xRE8Fbz8AN+YCLigQeH0B9lijxkjAFr+thB0IrOu7ruwNY+mvdP6dAewUur+pJ
-        aIjEe+4s8JBEFb4BxJfBBPuEbGSxbi4OPEJuwT53TMJMEs7+gIxCCmwioTggTBp6
-        JzDsT/cdBeyWCusCQwDWpqoYCoUWJLrUQ6dOlI7s6p+iIUNIamtyBCwb4izs27Hd
-        EpX8gvO9rEdtcb7399HyO3oD4gHgcuFiuZTpvWHdn9WYwPGM6npJNG7crtLnctTR
-        0cP9KutSPNzpySeAniHx8L9ebdD9tNPCWC+OtOcGRrcBeEznkYh1C4kzdP1ORm5u
-        pnknABEBAAGJAR8EGAEIABMFAmKItdQJELU9yA0T7e8FAhsMAABJmAgAhRPk/dFj
-        71bU/UTXrkEkZZzE9JzUgan/ttyRrV6QbFZABByf4pYjBj+yLKw3280//JWurKox
-        2uzEq1hdXPedRHICRuh1Fjd00otaQ+wGF3kY74zlWivB6Wp6tnL9STQ1oVYBUv7H
-        hSHoJ5shELyedxxHxurUgFAD+pbFXIiK8cnAHfXTJMcrmPpC+YWEC/DeqIyEcNPk
-        zRhtRSuERXcq1n+KJvMUAKMD/tezwvujzBaaSWapmdnGmtRjjL7IxUeGamVWOwLQ
-        bUr+34MwzdeJdcL8fav5LA8Uk0ulyeXdwiAK8FKQsixI+xZvz7HUs8ln4pZwGw/T
-        pvO9cMkHogtgzZkBDQRgPRBZAQgAtYpc0k9MJ7PrsGchAOSFbWHsgLl02kFBAHe9
-        EqiJUKQ3eBMlYsd0gmp0CLvHRvWat/sdvFgW9jrlz/aHNOsmzlnbtpuzeT2NAVE+
-        AjgN+iVf2K8ZjbPufzPmJwx6ab+t44ESDpM181zaOksE7JdsRvXygd00tCDLwZFn
-        cOTxqwTORoIUXHnIKEgAMEW1iVzkRxilcJVerTsUGf8agNPITyZ3jH7DBTzl7IrY
-        BkR6F45VFi1Xie9JpiGLAv6QYJSMAs5nQ/BHt/TK5Ul27l1UIs9/Ih35712KSxJo
-        DVysyNAx/bSoPN9t5AC86miZSxTiyZv7lSV0VBHykty4VWUDMwARAQABtFFSYXB0
-        dXJlIEF1dG9tYXRpYyBTaWduaW5nIEtleSAoY2xvdWQtcmFwdHVyZS1zaWduaW5n
-        LWtleS0yMDIxLTAzLTAxLTA4XzAxXzA5LnB1YimJASgEEwEIABwFAmA9EFkJEP7q
-        kWkwfqBxAhsDBQkDwwqwAhkBAAB7ZQgAsUljKd8kXC5rB4cRg7efZ4UjV4aLlojX
-        j0jHubxE0AP5YYqfWcfzT0QmuKuY6SAwZRGDoOu2Gp87XI0lhkiN+V25auNx+Li0
-        sYeD7Ss2TKPlI/J9lTRzmVwXRnLDg3FN8pxeuK+3k0Hr1HtmlNCjdqOuejtx6xOI
-        rTlSmMJ55JjbJBuOW/W+wyZ7EOlj7M1HPJTYbGtoASOr3y5evL44+z5VsNN9ATP0
-        aDBD6aDgKaIR6LH5zYcSZhNQMcAZDBM8qNpGYT2RofOSw5w2wL40hSqmEj0XipkR
-        Yy5aNwz1R2f3XkJ+p6B24FAoS6NtRXn4ZWTurcrK29vNzFjCMmP2ErkBDQRgPRBZ
-        AQgA3HTvwMNarnWTkWQjS89704kEhXFBWMknHySZ8FLIPH8tJIIPaJRWNBiuYnE+
-        p/7IXNUZSKbqqzkGAWYLSt3UmXzgFxNjdtB1Lwvp6yirl11/o3DP19ZB8cF+bRun
-        wdX8jR9Kf0KrMxH2ERybtGOD6J02CLJSE5xM5TeIVDev5sdfplj5eD+Ee/4evqe0
-        No7WgpRLXXRdHnjn9ejGuUvH33/NLmQiyaFbt5Tlwk9tqAn+6ph9l3XZqhorFEnK
-        sJm5rr99LXUHnZ/vJ4yqNqX6VRdTmuuwlkV3Sk5J7mcm8SPSKXIr8vAiEi9g6NLs
-        4o+0ke5HlX+xtUNyt4idMJ+pgwARAQABiQEfBBgBCAATBQJgPRBZCRD+6pFpMH6g
-        cQIbDAAAP9wH/RSdoRKdteOH84LTVhzlRb9u4bKzu8GBWcKInPZR0peIhMPJiXP9
-        5BF3YPVX/Ztc2xv5GerJZs6X7+8wwHTd4dx09Adcq298V80V9M4TmAG0ElJ3Og3p
-        oQ2aA1rf8FXHin873mwfVUw80QVFc8Qnbr2Ooo9KdgD2aZ06857wj6Ah5H8wTAt2
-        cpNRbnoj0z6D9fTNAT66DMvKg1UpBa9Ll9zzOeIUDephkUIOR1VQcVDWjJ59sjkH
-        MW0P0/3SpaI3aUZr6RsmI3678hMRPKMGJ/C+5ctje+hnGOpIjdQpk5woHa21NEj2
-        nJu128U2JUB8CQhGvR3+P57ogWscFyrnP8s=
-        =MEKX
-        -----END PGP PUBLIC KEY BLOCK-----
+    libcontainers.list:
+      keyid: 2472D6D0D2F66AF87ABA8DA34D64390375060AA4
+      source: "deb [signed-by=$KEY_FILE] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_22.04/ /"
 
-    devel:kubic:libcontainers:stable.list:
-      source: "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_22.04/ /"
-      key: |
-        -----BEGIN PGP PUBLIC KEY BLOCK-----
-        Version: GnuPG v1.4.5 (GNU/Linux)
-
-        mQENBFtkV0cBCADStSTCG5qgYtzmWfymHZqxxhfwfS6fdHJcbGUeXsI5dxjeCWhs
-        XarZm6rWZOd5WfSmpXhbKOyM6Ll+6bpSl5ICHLa6fcpizYWEPa8fpg9EGl0cF12G
-        GgVLnnOZ6NIbsoW0LHt2YN0jn8xKVwyPp7KLHB2paZh+KuURERG406GXY/DgCxUx
-        Ffgdelym/gfmt3DSq6GAQRRGHyucMvPYm53r+jVcKsf2Bp6E1XAfqBrD5r0maaCU
-        Wvd7bi0B2Q0hIX0rfDCBpl4rFqvyaMPgn+Bkl6IW37zCkWIXqf1E5eDm/XzP881s
-        +yAvi+JfDwt7AE+Hd2dSf273o3WUdYJGRwyZABEBAAG0OGRldmVsOmt1YmljIE9C
-        UyBQcm9qZWN0IDxkZXZlbDprdWJpY0BidWlsZC5vcGVuc3VzZS5vcmc+iQE+BBMB
-        CAAoBQJjkECIAhsDBQkMSplBBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRBN
-        ZDkDdQYKpPVfCACZNU7GNUKkTWQMsnefRe3x8xq7MXKYO8DC5rt1fVKQEbRl41Jo
-        bMGMUyfCM4piB6feo8pENmSGLwSltZfXj4iWfwaOvk3vRGzLs2LJn2u9qIp9m9pK
-        Dl7DqfOXFWv/7gnjKsZM0faioGZB75hQKFlD11KJNm20wo1jlP+Km8aaT/wVhN6i
-        5ilLh9L7E5iTskCYTBGwmxJV6LlXkGPytVQ+86bmMWVMPJ1yZCb9scIPGxDNoLxx
-        eefYEeaj4L4GoY28LiYPDjPT8crmBKJyV6EHaa5XijaQFRGqov9CWch4lctGMEvY
-        TU2bkgXxhfhvJnOzdDDQEPIOc8R3DVeyL8dxiEYEExECAAYFAltkV0cACgkQOzAR
-        t2udZSOoswCdF44NTN09DwhPFbNYhEMb9juP5ykAn0bcELvuKmgDwEwZMrPQkG8t
-        Pu9n
-        =YclD
-        -----END PGP PUBLIC KEY BLOCK-----
-
-    devel:kubic:libcontainers:stable:cri-o:##CRIOVERSION##.list:
-      source: "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/##CRIOVERSION##/xUbuntu_22.04/ /"
-      key: |
-        -----BEGIN PGP PUBLIC KEY BLOCK-----
-        Version: GnuPG v1.4.5 (GNU/Linux)
-
-        mQENBFtkV0cBCADStSTCG5qgYtzmWfymHZqxxhfwfS6fdHJcbGUeXsI5dxjeCWhs
-        XarZm6rWZOd5WfSmpXhbKOyM6Ll+6bpSl5ICHLa6fcpizYWEPa8fpg9EGl0cF12G
-        GgVLnnOZ6NIbsoW0LHt2YN0jn8xKVwyPp7KLHB2paZh+KuURERG406GXY/DgCxUx
-        Ffgdelym/gfmt3DSq6GAQRRGHyucMvPYm53r+jVcKsf2Bp6E1XAfqBrD5r0maaCU
-        Wvd7bi0B2Q0hIX0rfDCBpl4rFqvyaMPgn+Bkl6IW37zCkWIXqf1E5eDm/XzP881s
-        +yAvi+JfDwt7AE+Hd2dSf273o3WUdYJGRwyZABEBAAG0OGRldmVsOmt1YmljIE9C
-        UyBQcm9qZWN0IDxkZXZlbDprdWJpY0BidWlsZC5vcGVuc3VzZS5vcmc+iQE+BBMB
-        CAAoBQJjkECIAhsDBQkMSplBBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRBN
-        ZDkDdQYKpPVfCACZNU7GNUKkTWQMsnefRe3x8xq7MXKYO8DC5rt1fVKQEbRl41Jo
-        bMGMUyfCM4piB6feo8pENmSGLwSltZfXj4iWfwaOvk3vRGzLs2LJn2u9qIp9m9pK
-        Dl7DqfOXFWv/7gnjKsZM0faioGZB75hQKFlD11KJNm20wo1jlP+Km8aaT/wVhN6i
-        5ilLh9L7E5iTskCYTBGwmxJV6LlXkGPytVQ+86bmMWVMPJ1yZCb9scIPGxDNoLxx
-        eefYEeaj4L4GoY28LiYPDjPT8crmBKJyV6EHaa5XijaQFRGqov9CWch4lctGMEvY
-        TU2bkgXxhfhvJnOzdDDQEPIOc8R3DVeyL8dxiEYEExECAAYFAltkV0cACgkQOzAR
-        t2udZSOoswCdF44NTN09DwhPFbNYhEMb9juP5ykAn0bcELvuKmgDwEwZMrPQkG8t
-        Pu9n
-        =YclD
-        -----END PGP PUBLIC KEY BLOCK-----
+    cri-o_{{ crio_version }}.list:
+      keyid: 2472D6D0D2F66AF87ABA8DA34D64390375060AA4
+      source: "deb [signed-by=$KEY_FILE] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/{{ crio_version }}/xUbuntu_22.04/ /"
 
 write_files:
   - path: /etc/hosts
     append: true
     content: |
-      127.0.0.1 k8smaster K8SMaster
-      ##PRIVATEIP## k8smaster K8SMaster
-      10.0.200.10 k8sworker K8SWorker
+      {%- for host in etc_hosts %}
+      {{ host.private_ip }} {{ host.hostname }}
+      {{ host.wg_ip }} {{ host.hostname }}
+      {%- endfor %}
   - path: /etc/modules-load.d/k8s.conf
     content: |
       overlay
@@ -135,6 +36,7 @@ write_files:
       net.bridge.bridge-nf-call-iptables = 1
       net.bridge.bridge-nf-call-ip6tables = 1
       net.ipv4.conf.all.proxy_arp = 1
+      net.ipv4.conf.all.forwarding = 1
 
       # Filesystem and Disk I/O
       vm.dirty_ratio = 10
@@ -155,51 +57,49 @@ write_files:
       # Security
       kernel.randomize_va_space = 2
       kernel.sysrq = 0
-  - path: /root/config.yaml
-    permissions: "0644"
-    content: |
-      apiVersion: kubeadm.k8s.io/v1beta3
-      kind: InitConfiguration
-      localAPIEndpoint:
-        advertiseAddress: ##PRIVATEIP##
-      nodeRegistration:
-        taints: []
-        kubeletExtraArgs:
-            node-labels: "node.kubernetes.io/role=master" 
-      ---
-      apiVersion: kubeadm.k8s.io/v1beta3
-      kind: ClusterConfiguration
-      controlPlaneEndpoint: ##PRIVATEIP##
-      networking:
-        dnsDomain: cluster.local
-        podSubnet: ##PODSUBNET##
-        serviceSubnet: ##SERVICESUBNET##
-      apiServer:
-        extraArgs:
-          bind-address: 0.0.0.0
-        certSANs:
-          - ##PRIVATEIP##
-          - ##PUBLICDOMAIN##
-      ---
-      apiVersion: kubelet.config.k8s.io/v1beta1
-      kind: KubeletConfiguration
-      serverTLSBootstrap: true
   - path: /etc/wireguard/wg0.conf
     permissions: "0600"
     content: |
-      [Interface]
-      PrivateKey = ##WIREGUARDPRIVATEKEY##
-      Address = 10.0.0.1/32
-      ListenPort = 51000
+      {{ wireguard_config | indent(6) }}
+  - path: /etc/haproxy/haproxy.cfg
+    content: |
+      global
+        log /dev/log    local0
+        log /dev/log    local1 notice
+        chroot /var/lib/haproxy
+        stats socket /run/haproxy/admin.sock mode 660 level admin expose-fd listeners
+        stats timeout 30s
+        user haproxy
+        group haproxy
+        daemon
 
-      [Peer]
-      PublicKey = ##PEERPUBKEY##
-      Endpoint = ##PEERIP##:5100
-      AllowedIPs = 10.0.200.0/24,10.0.0.2/32,##PODSUBNET##,##SERVICESUBNET##
+      defaults
+        log     global
+        mode    tcp
+        option  tcplog
+        option  dontlognull
+        timeout connect 5000
+        timeout client  50000
+        timeout server  50000
+
+      frontend tcp_listner
+        bind *:2016
+        mode tcp
+        option tcplog
+        default_backend tcp_backend_6443
+
+      backend tcp_backend_6443
+          balance roundrobin
+          mode tcp
+          {%- for host in etc_hosts %}
+          server {{ host.hostname }} {{ host.private_ip }}:6443 check
+          {%- endfor %}
 
 packages:
   - cri-o
   - cri-o-runc
+  - haproxy
+  - keepalived
   - kubelet
   - kubeadm
   - kubectl
@@ -208,15 +108,15 @@ packages:
 runcmd:
   # Disable the following line to stop logging all dropped packets
   - iptables -I INPUT -m limit --limit 5/min -j LOG --log-prefix "packet-drop " --log-level 7
-  - iptables-save | grep -v "DROP" | grep -v "REJECT" > /tmp/iptables-rules
-  - iptables-restore < /tmp/iptables-rules
+  - iptables-save | grep -v "DROP" | grep -v "REJECT" | iptables-restore
   - iptables -I INPUT -p udp -m udp --dport 51000 -j ACCEPT
   - iptables -I INPUT -i wg0 -j ACCEPT
   - iptables -I INPUT -i lo -j ACCEPT
+  - sysctl --system
+  - modprobe -a overlay br_netfilter
   - netfilter-persistent save
   - systemctl restart iptables
-  - systemctl enable wg-quick@wg0
+  - systemctl enable --now wg-quick@wg0
   - systemctl enable --now crio
-  - sysctl --system
+  - systemctl enable --now haproxy
   - kubeadm config images pull
-  - kubeadm init --config /root/config.yaml --upload-certs

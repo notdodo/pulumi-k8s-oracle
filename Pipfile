@@ -10,6 +10,8 @@ pulumi-cloudflare = "*"
 pulumi-command = "*"
 pulumi-tls = "*"
 requests = "*"
+jinja2 = "*"
+cryptography = "*"
 
 [dev-packages]
 flake8 = "*"

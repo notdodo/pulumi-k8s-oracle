@@ -1,0 +1,15 @@
+secretsprovider: awskms://alias/pulumi-encryption-key?region=eu-west-1
+encryptedkey: AQICAHiHEhIeJhTWLzAfNeKp0vrO+R8bBVSa1gAMOSMQrfq8DgEbiXQfnnHt71KmlZZWqLSYAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM7p+YBBNrtREDwNrcAgEQgDusbly8mDfeUBZmkMYjdLS+Bxi8myjs1aRWVclObwe0mQFxSIHiJcC3EkD35aeGh+vH7kPTtXgDxc1HCg==
+config:
+  pulumi-k8s-oracle:k8smaster1_tenancy_ocid:
+    secure: v1:6LKN58CfWJ8sNKT6:WtquSHquQsjdO0UO1OCKNpZbN8V+IVSGsVWVBUK0Gk2SYEYq1c7RJ2Uoeqw3LlUutNFzRqayVxb3UPuKIxmLlldGiDrHtANQ/7DjIG/gC/8W4yxN4tyH5tlGR7cuoVE=
+  pulumi-k8s-oracle:k8smaster1_wg_private_key:
+    secure: v1:ZAW+q68F69ae9jZH:J7or/bAO4CRGyswUMJsRY4Mk60NpCWFMtm7Rf5QIosD7dCsnDvrKt/30pYMPC0ocxiqD3MA6FXewbNyl
+  pulumi-k8s-oracle:k8smaster1_wg_public_key:
+    secure: v1:Bi79NouEB5iPyMlV:ulfJdQtbs+dxyElQnBxhkz3Di7iRSuVXbPGjTunsrk0Fk34zic6es7d25+zrkqNwHXLlxxEiP7Q6VvSq
+  pulumi-k8s-oracle:k8smaster2_tenancy_ocid:
+    secure: v1:kausW0pHixPlR3hd:m5p1qsLAzBoxuW1aGzxb7md9+YrUW5eUql7svt+JjC2q87T5PWkMIxpNvyGcviHHG+Qxnvpza+X82vdD27h+CdXEvESZR+yIFYAuLL+3Zn3mH6yfS96S0yFGG6eW6Bs=
+  pulumi-k8s-oracle:k8smaster2_wg_private_key:
+    secure: v1:OI8/RniNu+qVGLE2:dbw7nWzLKlituAac+Nhyp2LevyE9b5M8u6Ptdl7WxerVNO7ye9pnlPKOJTIkUBMJ36iOsJNv+WZYwzZM
+  pulumi-k8s-oracle:k8smaster2_wg_public_key:
+    secure: v1:rCDik5Ju1/osO38/:ieQrtsismMKL2zm2KMKsJCINjbSlqJUIcHT3IcHFbdxgU8ViJiQVP9UzUlYKuVHdVTdJwGbWc2Y19qA2

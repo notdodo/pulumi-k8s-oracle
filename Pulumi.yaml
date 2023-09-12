@@ -8,21 +8,28 @@ config:
   base_domain: thedodo.xyz
   base_stack_ref: notdodo/pulumi-k8s-oracle/
   cloudflare_zone_id: cec5bf01afed114303a536c264a1f394
-  cloudflare_record_names:
-    - name: k8s
-      proxy: false
-    - name: vault
-      proxy: true
-    - name: elk
-      proxy: true
-  crio_version: "1.27"
-  cni_cidr: 10.85.0.0/16
-  instance_memory_in_gbs: 24
-  instance_ocpus: 4
+  cloudflare:
+    - records:
+        - name: k8s
+          proxy: false
+          type: A
+        - name: vault
+          proxy: true
+          type: A
+        - name: elk
+          proxy: true
+          type: A
+  crio_version: "1.28"
+  cluster_name: thedodo-k8s
+  cluster_cni_cidr: 10.85.0.0/16
+  cluster_pod_subnet: 10.123.0.0/16
+  cluster_service_subnet: 10.96.0.0/12
+  instance_memory_in_gbs: 24 # Max RAM
+  instance_ocpus: 4 # Max CPUs
   instance_operating_system: Canonical Ubuntu
   instance_shape: VM.Standard.A1.Flex
   instance_operating_system_version: "22.04 Minimal aarch64"
-  instance_volume_in_gbs: "200"
+  instance_volume_in_gbs: 200 # Max Disk
   oci_agent_bastion: DISABLED
   oci_agent_blkvolume: DISABLED
   oci_agent_comptinstance: ENABLED
@@ -31,7 +38,23 @@ config:
   oci_agent_mgmt: DISABLED
   oci_agent_osmgmtsvc: ENABLED
   oci_agent_vulnerability: ENABLED
-  pod_subnet: 10.123.0.0/16
   public_ip_enabled: true
-  service_subnet: 10.96.0.0/12
   vcn_cidr_block: 10.0.0.0/16
+  instances:
+    - name: k8smaster1
+      cluster_bootstrap: true
+      is_controlplane: true
+      kubeadm_init_extra_args:
+        - --upload-certs
+      oci_profile: DEFAULT
+      private_ip: 10.0.100.90
+      wg_ip: 10.0.0.1
+      subnet_cidr: 10.0.100.0/24
+      user_data: cloud-init-bootstrap_node.yaml
+    - name: k8smaster2
+      is_controlplane: true
+      subnet_cidr: 10.0.200.0/24
+      private_ip: 10.0.200.90
+      wg_ip: 10.0.0.2
+      oci_profile: secondary
+      user_data: cloud-init-bootstrap_node.yaml

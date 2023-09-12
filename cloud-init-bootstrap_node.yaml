@@ -57,14 +57,89 @@ write_files:
       # Security
       kernel.randomize_va_space = 2
       kernel.sysrq = 0
+  - path: /root/config.yaml
+    permissions: "0644"
+    content: |
+      apiVersion: kubeadm.k8s.io/v1beta3
+      kind: InitConfiguration
+      localAPIEndpoint:
+        advertiseAddress: {{ cluster_advertise_address }}
+      nodeRegistration:
+        taints: []
+        kubeletExtraArgs:
+            node-labels: "node.kubernetes.io/role=master"
+      ---
+      apiVersion: kubeadm.k8s.io/v1beta3
+      kind: ClusterConfiguration
+      clusterName: {{ cluster_name }}
+      controlPlaneEndpoint: {{ control_plane_endpoint }}:2016
+      networking:
+        dnsDomain: cluster.local
+        podSubnet: {{ pod_subnet }}
+        serviceSubnet: {{ service_subnet }}
+      controllerManager:
+        extraArgs:
+          allocate-node-cidrs: "true"
+      apiServer:
+        extraArgs:
+          bind-address: 0.0.0.0
+          authorization-mode: Node,RBAC
+          enable-admission-plugins: NodeRestriction
+        certSANs:
+          - {{ control_plane_endpoint }}
+          {%- for host in etc_hosts %}
+          - {{ host.private_ip }}
+          - {{ host.hostname }}
+          - {{ host.wg_ip }}
+          {%- endfor %}
+      ---
+      apiVersion: kubelet.config.k8s.io/v1beta1
+      kind: KubeletConfiguration
+      serverTLSBootstrap: true
+      cgroupDriver: systemd
   - path: /etc/wireguard/wg0.conf
     permissions: "0600"
     content: |
       {{ wireguard_config | indent(6) }}
+  - path: /etc/haproxy/haproxy.cfg
+    content: |
+      global
+        log /dev/log    local0
+        log /dev/log    local1 notice
+        chroot /var/lib/haproxy
+        stats socket /run/haproxy/admin.sock mode 660 level admin expose-fd listeners
+        stats timeout 30s
+        user haproxy
+        group haproxy
+        daemon
+
+      defaults
+        log     global
+        mode    tcp
+        option  tcplog
+        option  dontlognull
+        timeout connect 5000
+        timeout client  50000
+        timeout server  50000
+
+      frontend tcp_listner
+        bind *:2016
+        mode tcp
+        option tcplog
+        default_backend tcp_backend_6443
+
+      backend tcp_backend_6443
+          balance roundrobin
+          mode tcp
+          {%- for host in etc_hosts %}
+          server {{ host.hostname }} {{ host.private_ip }}:6443 check
+          {%- endfor %}
 
 packages:
   - cri-o
   - cri-o-runc
+  - haproxy
+  - keepalived
   - kubelet
   - kubeadm
   - kubectl
@@ -74,6 +149,7 @@ runcmd:
   # Disable the following line to stop logging all dropped packets
   - iptables -I INPUT -m limit --limit 5/min -j LOG --log-prefix "packet-drop " --log-level 7
   - iptables-save | grep -v "DROP" | grep -v "REJECT" | iptables-restore
+  - iptables -I INPUT -p udp -m udp --dport 51000 -j ACCEPT
   - iptables -I INPUT -i wg0 -j ACCEPT
   - iptables -I INPUT -i lo -j ACCEPT
   - sysctl --system
@@ -82,3 +158,6 @@ runcmd:
   - systemctl restart iptables
   - systemctl enable --now wg-quick@wg0
   - systemctl enable --now crio
+  - systemctl enable --now haproxy
+  - kubeadm config images pull
+  - kubeadm init --config /root/config.yaml --upload-certs

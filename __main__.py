@@ -1,131 +1,226 @@
-import json  # pyright: ignore[reportShadowedImports]
-import os
-import stat
+import base64  # pyright: ignore[reportShadowedImports]
 
+import jinja2
 import pulumi
 import pulumi_command as pc
-import pulumi_tls
+import pulumi_oci as oci
 
 import resources.dns as cloudflare
+import wireguard as wg
 from resources.compartment import Compartment
 from resources.instance import Instance
 from resources.network import Network
-from resources.outputs import outputs
+from resources.ssh_keys import generate_ssh_keys
 
 config = pulumi.Config()
-private_key = ""
-public_key = ""
+instances = config.require_object("instances")
+private_key, public_key = generate_ssh_keys()
 
-if not (os.path.exists("ssh_priv.key") and os.path.exists("ssh_pub.key")):
-    private_key_resource = pulumi_tls.PrivateKey(
-        "k8sPrivateKey",
-        algorithm="ED25519",
+
+def create_template(path: str) -> jinja2.Template:
+    with open(path, "r") as f:
+        return jinja2.Template(f.read())
+
+
+bootstrap_template = create_template("./cloud-init-bootstrap_node.yaml")
+worker_template = create_template("./cloud-init-worker.yaml")
+master_template = create_template("./cloud-init-master.yaml")
+
+crio_version = config.require("crio_version")
+cluster_name = config.require("cluster_name")
+pod_subnet = config.require("cluster_pod_subnet")
+service_subnet = config.require("cluster_service_subnet")
+control_plane_endpoint = f"k8s.{config.require('base_domain')}"
+etc_hosts = [
+    {
+        "hostname": instance["name"],
+        "private_ip": instance.get("private_ip"),
+        "wg_ip": instance.get("wg_ip"),
+    }
+    for instance in instances
+]
+
+for i, instance in enumerate(instances):
+    oci_profile = instance.get("oci_profile")
+    provider = oci.Provider(
+        f"{instance.get('oci_profile')}",
+        config_file_profile=instance.get("oci_profile"),
     )
-    public_key = private_key_resource.public_key_openssh
-    private_key = private_key_resource.private_key_openssh
 
-    def write_to_file(what, file):
-        with open(file, "w") as f:
-            f.write(what)
-        os.chmod(file, stat.S_IRWXU)
-
-    private_key.apply(lambda x: write_to_file(x, "ssh_priv.key"))
-    public_key.apply(lambda x: write_to_file(x, "ssh_pub.key"))
-else:
-    private_key = open("ssh_priv.key").read()
-    public_key = open("ssh_pub.key").read()
-
-compartment = Compartment(config.require("compartment_name"))
-network = Network(
-    compartment=compartment,
-    node_config=config,
-    opts=pulumi.ResourceOptions(depends_on=compartment),
-)
-
-network.create_vcn()
-network.create_subnet()
-network.create_internet_gateway()
-network.create_route_table()
-
-instance_extra_cmds = []
-master_ip = ""
-
-user_data_substitutions = {
-    "##CRIOVERSION##": config.require("crio_version"),
-    "##PODSUBNET##": config.require("pod_subnet"),
-    "##PRIVATEIP##": config.require("private_ip"),
-    "##PUBLICDOMAIN##": f"k8s.{config.require('base_domain')}",
-    "##SERVICESUBNET##": config.require("service_subnet"),
-    "##WIREGUARDPRIVATEKEY##": config.require("wireguard_private_key"),
-    "##PEERPUBKEY##": config.require("wireguard_peer_public_key"),
-}
-
-if "worker" in pulumi.get_stack():
-    master_ip = json.loads(os.popen("pulumi stack output -s master -j").read()).get(
-        "instance_ip"
+    compartment = Compartment(
+        compartment_name=f"k8s_cluster_{instance.get('name')}",
+        opts=pulumi.ResourceOptions(provider=provider),
     )
-    user_data_substitutions["##PEERIP##"] = master_ip
-    connection = pc.remote.ConnectionArgs(
-        user="ubuntu",
-        host=master_ip,
-        private_key=open("ssh_priv.key", "r").read(),
+    network = Network(
+        name=instance.get("name"),
+        compartment=compartment,
+        vcn_cidr_block=config.require("vcn_cidr_block"),
+        subnet_cidr=instance.get("subnet_cidr"),
+        opts=pulumi.ResourceOptions(depends_on=compartment, provider=provider),
     )
-    join_cmd = ""
-    if config.get_bool("is_new_control_plane"):
-        join_cmd = pc.remote.Command(
-            "JoinCommand",
-            connection=connection,
-            create="echo $(sudo kubeadm token create --print-join-command) " +
-                   "--control-plane --certificate-key $(sudo kubeadm init phase " +
-                   "upload-certs --upload-certs | grep -vw -e certificate -e Namespace)",
+
+    public_ip = network.public_ip
+    instances[i]["provider"] = provider
+    instances[i]["compartment"] = compartment
+    instances[i]["public_ip"] = public_ip
+    instances[i]["public_ip_id"] = network.public_ip_id
+    instances[i]["network"] = network
+    instances[i]["wg_private"] = config.require_secret(
+        f"{instance.get('name')}_wg_private_key"
+    )
+    instances[i]["wg_public"] = config.require_secret(
+        f"{instance.get('name')}_wg_public_key"
+    )
+    pulumi.export(f"\"{instance.get('name')}\" public IP:", public_ip)
+
+for i, instance in enumerate(instances):
+    wg_config = wg.generate_config(
+        interface=instance["wg_ip"],
+        private_key=instance["wg_private"],
+        peers=[
+            {
+                "public_ip": inst.get("public_ip"),
+                "public_key": inst.get("wg_public"),
+                "allowed_ips": f"{inst.get('private_ip')}/32,{inst.get('wg_ip')}/32,"
+                + config.require("cluster_pod_subnet")
+                + ","
+                + config.require("cluster_service_subnet"),
+            }
+            for inst in instances
+            if inst.get("name") is not instance.get("name")
+        ],
+    )
+
+    if instance.get("cluster_bootstrap"):
+        user_data = pulumi.Output.all(
+            wg_config=wg_config,
+        ).apply(
+            lambda wg_config: base64.b64encode(
+                bytes(
+                    bootstrap_template.render(
+                        crio_version=crio_version,
+                        etc_hosts=etc_hosts,
+                        cluster_advertise_address=instance["wg_ip"],
+                        cluster_name=cluster_name,
+                        control_plane_endpoint=control_plane_endpoint,
+                        pod_subnet=pod_subnet,
+                        service_subnet=service_subnet,
+                        wireguard_config=wg_config["wg_config"],
+                    ),
+                    "utf-8",
+                )
+            ).decode("utf-8")
+        )
+    elif instance.get("is_controlplane"):
+        user_data = pulumi.Output.all(
+            wg_config=wg_config,
+        ).apply(
+            lambda wg_config: base64.b64encode(
+                bytes(
+                    master_template.render(
+                        crio_version=crio_version,
+                        etc_hosts=etc_hosts,
+                        cluster_advertise_address=instance.get("wg_ip"),
+                        cluster_name=cluster_name,
+                        control_plane_endpoint=control_plane_endpoint,
+                        pod_subnet=pod_subnet,
+                        service_subnet=service_subnet,
+                        wireguard_config=wg_config["wg_config"],
+                        bootstrap_node_hostname=instance.get("name"),
+                    ),
+                    "utf-8",
+                )
+            ).decode("utf-8")
         )
     else:
-        join_cmd = pc.remote.Command(
-            "JoinCommand",
-            connection=connection,
-            create="sudo kubeadm token create --print-join-command",
+        user_data = pulumi.Output.all(
+            wg_config=wg_config,
+        ).apply(
+            lambda wg_config: base64.b64encode(
+                bytes(
+                    worker_template.render(
+                        crio_version=crio_version,
+                        etc_hosts=etc_hosts,
+                        cluster_advertise_address=instance["wg_ip"],
+                        cluster_name=cluster_name,
+                        control_plane_endpoint=control_plane_endpoint,
+                        pod_subnet=pod_subnet,
+                        service_subnet=service_subnet,
+                        wireguard_config=wg_config["wg_config"],
+                        bootstrap_node_hostname=instance["name"],
+                    ),
+                    "utf-8",
+                )
+            ).decode("utf-8")
         )
-    instance_extra_cmds.append(join_cmd.stdout)
+
+    instances[i]["user_data"] = user_data
 
 
-instance = Instance(
-    compartment=compartment,
-    network=network,
-    node_config=config,
-    public_key=public_key,
-    opts=pulumi.ResourceOptions(depends_on=compartment),
+for i, instance in enumerate(instances):
+    instances[i]["instance"] = Instance(
+        name=instance["name"],
+        compartment=instance["compartment"],
+        network=instance["network"],
+        user_data=instance["user_data"],
+        private_ip=instance["private_ip"],
+        public_ip_id=instance["public_ip_id"],
+        provider=instance["provider"],
+        public_key=public_key,
+    ).create_instance()
+
+for instance in instances:
+    if instance.get("is_controlplane"):
+        for record in config.require_object("cloudflare")[0].get("records"):
+            cloudflare.create_dns_records(
+                instance.get("name"), instance["public_ip"], record
+            )
+
+connection = pc.remote.ConnectionArgs(
+    user="ubuntu",
+    host=[
+        instance.get("public_ip")
+        for instance in instances
+        if instance.get("cluster_bootstrap")
+    ][0],
+    private_key=open("ssh_priv.key", "r").read(),
 )
-node = instance.create_instance(
-    extra_cmds=instance_extra_cmds,
-    substitutions=user_data_substitutions,
+
+controlplane_join_cmd = (
+    "while ! grep -q 'successfully' /var/log/cloud-init-output.log; do sleep 1; done;"
+    + "echo sudo $(sudo kubeadm token create --print-join-command) "
+    + "--control-plane --certificate-key $(sudo kubeadm init phase "
+    + "upload-certs --upload-certs | grep -vw -e certificate -e Namespace)"
 )
-outputs(node)
 
-
-for dns in json.loads(config.require("cloudflare_record_names")):
-    if (
-        dns.get("name") == "k8s"
-        and "worker" in pulumi.get_stack()
-        and not config.get_bool("is_new_control_plane")
-    ):
-        continue
-    cloudflare.create_dns_records(node.public_ip, dns)
-
-if "worker" in pulumi.get_stack():
-    connection = pc.remote.ConnectionArgs(
-        user="ubuntu",
-        host=master_ip,
-        private_key=open("ssh_priv.key", "r").read(),
-    )
+join_cmd = pulumi.Output.concat(
+    "while ! command -v kubeadm; do sleep 1; done;",
     pc.remote.Command(
-        "set-worker-ip-on-master-wg0",
+        "join_command",
         connection=connection,
-        create=pulumi.Output.concat(
-            'sudo sed -i "s/##PEERIP##/',
-            node.public_ip,
-            """/g" /etc/wireguard/wg0.conf; \
-            sudo sed -i "s/# //" /etc/wireguard/wg0.conf; \
-            sudo wg-quick down wg0; \
-            sudo wg-quick up wg0""",
-        ),
-    )
+        create=controlplane_join_cmd,
+        update=controlplane_join_cmd,
+        triggers=[i["instance"].id for i in instances],
+    ).stdout,
+)
+
+for instance in instances:
+    if instance.get("is_controlplane") and not instance.get("cluster_bootstrap"):
+        connection = pc.remote.ConnectionArgs(
+            user="ubuntu",
+            host=instance.get("public_ip"),
+            private_key=open("ssh_priv.key", "r").read(),
+        )
+
+        join_cmd = pulumi.Output.concat(
+            join_cmd,
+            " --apiserver-advertise-address ",
+            instance.get("wg_ip"),
+        )
+        pc.remote.Command(
+            f"join_{instance.get('name')}",
+            connection=connection,
+            create=join_cmd,
+            update=join_cmd,
+            triggers=[i["instance"].id for i in instances],
+        )

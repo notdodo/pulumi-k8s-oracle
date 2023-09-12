@@ -8,57 +8,97 @@ from resources.compartment import Compartment
 
 
 class Network(pulumi.ComponentResource):
-    __compartment = ""
-    __vcn = ""
-    __internet_gateway = ""
-    __subnet = ""
-    __route_table = ""
-    __config = ""
+    _compartment = ""
+    _vcn = ""
+    _internet_gateway = ""
+    _subnet = ""
+    _route_table = ""
+    _config = ""
 
     def __init__(
         self,
+        name: str,
         compartment: Compartment,
-        node_config: pulumi.Config,
+        vcn_cidr_block: str,
+        subnet_cidr: str,
         props: Optional[pulumi.Inputs] = None,
         opts: Optional[pulumi.ResourceOptions] = None,
         remote: bool = False,
     ) -> None:
-        super().__init__("oracle:network", "oracle:network", props, opts, remote)
-        self.__child_opts = pulumi.ResourceOptions(
+        super().__init__("oracle:network", f"network_{name}", props, opts, remote)
+        self._child_opts = pulumi.ResourceOptions(
             parent=self,
             delete_before_replace=True,
         )
-        self.__compartment = compartment
-        self.__config = node_config
-        self.instance_name = node_config.require("instance_name")
+        self._compartment = compartment
+        self._instance_name = name
+        self._vcn_cidr_block = vcn_cidr_block
+        self._subnet_cidr = subnet_cidr
+        self.create_network()
 
     def my_public_ip(self):
         return get("https://ifconfig.me").content.decode("utf8")
 
-    def create_vcn(self):
-        self.__vcn = oci.core.Vcn(
-            "{}VCN".format(self.instance_name),
-            cidr_blocks=[self.__config.get("vcn_cidr_block")],
-            compartment_id=self.__compartment.id,
-            display_name="{}VCN".format(self.instance_name),
+    @property
+    def vcn(self) -> oci.core.Vcn:
+        return self._vcn
+
+    @property
+    def subnet(self) -> oci.core.Subnet:
+        return self._subnet
+
+    @property
+    def internet_gateway(self) -> oci.core.InternetGateway:
+        return self._internet_gateway
+
+    @property
+    def public_ip(self) -> str:
+        return self._public_ip.ip_address
+
+    @property
+    def public_ip_id(self) -> str:
+        return self._public_ip.id
+
+    def create_network(self):
+        self._create_vcn()
+        self._create_security_list()
+        self._create_subnet()
+        self._create_internet_gateway()
+        self._create_route_table()
+        self._create_public_ip()
+
+    def _create_public_ip(self):
+        self._public_ip = oci.core.PublicIp(
+            f"public_ip_{self._instance_name}",
+            compartment_id=self._compartment.id,
+            lifetime="RESERVED",
+            opts=self._child_opts,
+        )
+
+    def _create_vcn(self):
+        self._vcn = oci.core.Vcn(
+            f"vcn_{self._instance_name}",
+            cidr_blocks=[self._vcn_cidr_block],
+            compartment_id=self._compartment.id,
+            display_name=f"vcn_{self._instance_name}",
             byoipv6cidr_details=[],
-            opts=self.__child_opts,
+            opts=self._child_opts,
         )
 
-    def create_internet_gateway(self):
-        self.__internet_gateway = oci.core.InternetGateway(
-            resource_name="{}InternetGateway".format(self.instance_name),
-            compartment_id=self.__compartment.id,
-            vcn_id=self.__vcn.id,
-            opts=self.__child_opts,
+    def _create_internet_gateway(self):
+        self._internet_gateway = oci.core.InternetGateway(
+            resource_name=f"igw_{self._instance_name}",
+            compartment_id=self._compartment.id,
+            vcn_id=self._vcn.id,
+            opts=self._child_opts,
         )
 
-    def create_subnet(self):
-        custom_security_list = oci.core.SecurityList(
-            compartment_id=self.__compartment.id,
-            resource_name="k8sSecList",
-            vcn_id=self.__vcn.id,
-            display_name="k8sSecList",
+    def _create_security_list(self):
+        self._custom_security_list = oci.core.SecurityList(
+            compartment_id=self._compartment.id,
+            resource_name=f"seclist_{self._instance_name}",
+            vcn_id=self._vcn.id,
+            display_name=f"seclist_{self._instance_name}",
             egress_security_rules=[
                 oci.core.SecurityListEgressSecurityRuleArgs(
                     protocol="all",
@@ -70,7 +110,7 @@ class Network(pulumi.ComponentResource):
                 oci.core.SecurityListIngressSecurityRuleArgs(
                     protocol="6",
                     source="0.0.0.0/0",
-                    description="Wireguard VPN",
+                    description="SSH",
                     tcp_options=oci.core.SecurityListIngressSecurityRuleTcpOptionsArgs(
                         max="22",
                         min="22",
@@ -87,11 +127,11 @@ class Network(pulumi.ComponentResource):
                 ),
                 oci.core.SecurityListIngressSecurityRuleArgs(
                     protocol="6",
-                    source=f"{self.my_public_ip()}/32",
-                    description="Kubeserver",
+                    source="0.0.0.0/0",
+                    description="Control Plan",
                     tcp_options=oci.core.SecurityListIngressSecurityRuleTcpOptionsArgs(
-                        max="6443",
-                        min="6443",
+                        max="2016",
+                        min="2016",
                     ),
                 ),
                 oci.core.SecurityListIngressSecurityRuleArgs(
@@ -113,43 +153,41 @@ class Network(pulumi.ComponentResource):
                     ),
                 ),
             ],
-            opts=self.__child_opts,
+            opts=self._child_opts,
         )
 
-        self.__subnet = oci.core.Subnet(
-            compartment_id=self.__compartment.id,
-            resource_name="{}Subnet".format(self.instance_name),
-            vcn_id=self.__vcn.id,
-            cidr_block=self.__config.get("instance_subnet_cidr"),
-            display_name="{}Subnet".format(self.instance_name),
+    def _create_subnet(self):
+        self._subnet = oci.core.Subnet(
+            compartment_id=self._compartment.id,
+            resource_name=f"subnet_{self._instance_name}",
+            vcn_id=self._vcn.id,
+            cidr_block=self._subnet_cidr,
+            display_name=f"subnet_{self._instance_name}",
             security_list_ids=[
-                custom_security_list,
+                self._custom_security_list,
             ],
             prohibit_public_ip_on_vnic=False,
-            route_table_id=self.__vcn.default_route_table_id,
-            dhcp_options_id=self.__vcn.default_dhcp_options_id,
-            opts=self.__child_opts,
+            route_table_id=self._vcn.default_route_table_id,
+            dhcp_options_id=self._vcn.default_dhcp_options_id,
+            opts=self._child_opts,
         )
 
-    def create_route_table(self):
-        self.__route_table = oci.core.DefaultRouteTable(
-            compartment_id=self.__compartment.id,
-            resource_name="{}RouteTable".format(self.instance_name),
+    def _create_route_table(self):
+        self._route_table = oci.core.DefaultRouteTable(
+            compartment_id=self._compartment.id,
+            resource_name=f"route_{self._instance_name}",
             route_rules=[
                 oci.core.RouteTableRouteRuleArgs(
-                    network_entity_id=self.__internet_gateway.id,
+                    network_entity_id=self._internet_gateway.id,
                     destination="0.0.0.0/0",
                 )
             ],
-            manage_default_resource_id=self.__subnet.route_table_id,
-            opts=self.__child_opts,
+            manage_default_resource_id=self._subnet.route_table_id,
+            opts=self._child_opts,
         )
         oci.core.RouteTableAttachment(
-            resource_name="RouteTable",
-            subnet_id=self.__subnet.id,
-            route_table_id=self.__route_table.id,
-            opts=self.__child_opts,
+            resource_name=f"route_attachment_{self._instance_name}",
+            subnet_id=self._subnet.id,
+            route_table_id=self._route_table.id,
+            opts=self._child_opts,
         )
-
-    def get_subnet(self):
-        return self.__subnet
