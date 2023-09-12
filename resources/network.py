@@ -128,7 +128,7 @@ class Network(pulumi.ComponentResource):
                 oci.core.SecurityListIngressSecurityRuleArgs(
                     protocol="6",
                     source="0.0.0.0/0",
-                    description="Control Plan",
+                    description="Control Plane",
                     tcp_options=oci.core.SecurityListIngressSecurityRuleTcpOptionsArgs(
                         max="2016",
                         min="2016",

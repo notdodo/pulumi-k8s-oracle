@@ -150,6 +150,7 @@ runcmd:
   - iptables -I INPUT -m limit --limit 5/min -j LOG --log-prefix "packet-drop " --log-level 7
   - iptables-save | grep -v "DROP" | grep -v "REJECT" | iptables-restore
   - iptables -I INPUT -p udp -m udp --dport 51000 -j ACCEPT
+  - iptables -I INPUT -p tcp -m tcp --dport 2016 -j ACCEPT
   - iptables -I INPUT -i wg0 -j ACCEPT
   - iptables -I INPUT -i lo -j ACCEPT
   - sysctl --system
