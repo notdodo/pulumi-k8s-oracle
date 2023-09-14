@@ -1,6 +1,8 @@
 secretsprovider: awskms://alias/pulumi-encryption-key?region=eu-west-1
 encryptedkey: AQICAHiHEhIeJhTWLzAfNeKp0vrO+R8bBVSa1gAMOSMQrfq8DgEbiXQfnnHt71KmlZZWqLSYAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM7p+YBBNrtREDwNrcAgEQgDusbly8mDfeUBZmkMYjdLS+Bxi8myjs1aRWVclObwe0mQFxSIHiJcC3EkD35aeGh+vH7kPTtXgDxc1HCg==
 config:
+  cloudflare:apiToken:
+    secure: v1:9SnczLhEdOJyygbT:kWmbJj0D2rLyTJBLpSxcPk45uO9noAXqvaMYjhEx4ODiU2mQ8Kdd86JdUtFC7jUT9DrDjCjdu1Y=
   pulumi-k8s-oracle:k8smaster1_tenancy_ocid:
     secure: v1:6LKN58CfWJ8sNKT6:WtquSHquQsjdO0UO1OCKNpZbN8V+IVSGsVWVBUK0Gk2SYEYq1c7RJ2Uoeqw3LlUutNFzRqayVxb3UPuKIxmLlldGiDrHtANQ/7DjIG/gC/8W4yxN4tyH5tlGR7cuoVE=
   pulumi-k8s-oracle:k8smaster1_wg_private_key:
