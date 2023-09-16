@@ -14,9 +14,9 @@ AllowedIPs = {allowed_ips}
 
 
 def generate_config(interface: str, private_key: str, peers: list) -> None:
-    config = pulumi.Output.all(private_key=private_key).apply(
+    config = pulumi.Output.from_input(private_key).apply(
         lambda private_key: INTERFACE.format(
-            private_key=private_key["private_key"], interface=interface
+            private_key=private_key, interface=interface
         )
     )
     for peer in peers:

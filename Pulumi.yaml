@@ -44,17 +44,13 @@ config:
     - name: k8smaster1
       cluster_bootstrap: true
       is_controlplane: true
-      kubeadm_init_extra_args:
-        - --upload-certs
-      oci_profile: DEFAULT
+      oci_profile: k8smaster1
       private_ip: 10.0.100.90
       wg_ip: 10.0.0.1
       subnet_cidr: 10.0.100.0/24
-      user_data: cloud-init-bootstrap_node.yaml
     - name: k8smaster2
       is_controlplane: true
       subnet_cidr: 10.0.200.0/24
       private_ip: 10.0.200.90
       wg_ip: 10.0.0.2
-      oci_profile: secondary
-      user_data: cloud-init-bootstrap_node.yaml
+      oci_profile: k8smaster2

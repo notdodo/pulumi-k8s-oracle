@@ -57,6 +57,9 @@ write_files:
       # Security
       kernel.randomize_va_space = 2
       kernel.sysrq = 0
+  - path: /etc/default/kubelet
+    content: |
+      KUBELET_EXTRA_ARGS="--node-ip={{ cluster_advertise_address }}"
   - path: /etc/wireguard/wg0.conf
     permissions: "0600"
     content: |

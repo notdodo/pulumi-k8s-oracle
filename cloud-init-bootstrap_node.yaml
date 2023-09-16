@@ -1,6 +1,6 @@
 #cloud-config
 package_upgrade: true
-package_reboot_if_required: true
+package_reboot_if_required: false
 
 apt:
   preserve_sources_list: true
@@ -67,7 +67,7 @@ write_files:
       nodeRegistration:
         taints: []
         kubeletExtraArgs:
-            node-labels: "node.kubernetes.io/role=master"
+            node-labels: "node.kubernetes.io/role=bootstrap"
       ---
       apiVersion: kubeadm.k8s.io/v1beta3
       kind: ClusterConfiguration
@@ -101,6 +101,9 @@ write_files:
     permissions: "0600"
     content: |
       {{ wireguard_config | indent(6) }}
+  - path: /etc/default/kubelet
+    content: |
+      KUBELET_EXTRA_ARGS="--node-ip={{ cluster_advertise_address }}"
   - path: /etc/haproxy/haproxy.cfg
     content: |
       global
@@ -136,6 +139,7 @@ write_files:
           {%- endfor %}
 
 packages:
+  - at
   - cri-o
   - cri-o-runc
   - haproxy

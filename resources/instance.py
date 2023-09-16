@@ -134,15 +134,7 @@ class Instance(pulumi.ComponentResource):
 
         return pulumi.Output.from_input(user_data_plain)
 
-    def create_instance(
-        self, extra_cmds: list = [], substitutions: dict = {}
-    ) -> oci.core.Instance:
-        # user_data_plain = self._generate_user_data(extra_cmds, substitutions)
-
-        # user_data = user_data_plain.apply(
-        #     lambda x: base64.b64encode(bytes(x, "utf-8")).decode("utf-8")
-        # )
-
+    def create_instance(self) -> oci.core.Instance:
         self._instance = oci.core.Instance(
             f"instance_{self._resource_name}",
             instance_options=oci.core.InstanceConfigurationInstanceDetailsLaunchDetailsInstanceOptionsArgs(
