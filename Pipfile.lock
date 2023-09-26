@@ -406,11 +406,12 @@
         },
         "pulumi-command": {
             "hashes": [
-                "sha256:2cacfa1dda6972e3ca2b2116cbd15007526cca449d5fe4e3f608c8e5a9795ed3"
+                "sha256:c0613e15c0b156bad221306dafcb63ab1d38319287653ee50e534f87ee00db15",
+                "sha256:f95840b7865ccc0aab915ade16df5d1054843716259e9261f27b91af71c23df7"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.7'",
-            "version": "==0.8.2"
+            "version": "==0.9.1"
         },
         "pulumi-oci": {
             "hashes": [
