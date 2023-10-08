@@ -97,6 +97,48 @@ write_files:
           {%- for host in etc_hosts %}
           server {{ host.hostname }} {{ host.private_ip }}:6443 check
           {%- endfor %}
+  - path: /etc/keepalived/keepalived.conf
+    content: |
+      global_defs {
+        notification_email {
+        }
+        router_id LVS_DEVEL
+        vrrp_skip_check_adv_addr
+        vrrp_garp_interval 0
+        vrrp_gna_interval 0
+      }
+
+      vrrp_script chk_haproxy {
+        script "killall -0 haproxy"
+        interval 2
+        weight 2
+      }
+
+      vrrp_instance haproxy-vip {
+        state BACKUP
+        priority 50
+        interface enp0s6
+        virtual_router_id 60
+        advert_int 1
+        authentication {
+          auth_type PASS
+          auth_pass {{ keepalived_password }}
+        }
+        unicast_src_ip {{ cluster_advertise_address }}
+        unicast_peer {
+          {%- for host in etc_hosts %}
+          {{ host.private_ip }}
+          {%- endfor %}
+        }
+
+        virtual_ipaddress {
+          {{ cluster_advertise_address ~ "1" }}/24
+        }
+
+        track_script {
+          chk_haproxy
+        }
+      }
 
 packages:
   - cri-o
@@ -120,7 +162,5 @@ runcmd:
   - modprobe -a overlay br_netfilter
   - netfilter-persistent save
   - systemctl restart iptables
-  - systemctl enable --now wg-quick@wg0
-  - systemctl enable --now crio
-  - systemctl enable --now haproxy
+  - systemctl enable --now wg-quick@wg0 crio haproxy keepalived
   - kubeadm config images pull

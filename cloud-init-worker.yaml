@@ -83,5 +83,4 @@ runcmd:
   - modprobe -a overlay br_netfilter
   - netfilter-persistent save
   - systemctl restart iptables
-  - systemctl enable --now wg-quick@wg0
-  - systemctl enable --now crio
+  - systemctl enable --now wg-quick@wg0 crio

@@ -15,3 +15,5 @@ config:
     secure: v1:OI8/RniNu+qVGLE2:dbw7nWzLKlituAac+Nhyp2LevyE9b5M8u6Ptdl7WxerVNO7ye9pnlPKOJTIkUBMJ36iOsJNv+WZYwzZM
   pulumi-k8s-oracle:k8smaster2_wg_public_key:
     secure: v1:rCDik5Ju1/osO38/:ieQrtsismMKL2zm2KMKsJCINjbSlqJUIcHT3IcHFbdxgU8ViJiQVP9UzUlYKuVHdVTdJwGbWc2Y19qA2
+  pulumi-k8s-oracle:keepalived_password:
+    secure: v1:XW8xFrvbBzUBQECu:VChhijEBfOOuUpB8V3RD0s0ayXFn9i+Chh3LlFiEgwcBiHlyduxWuHtd9jZYL69FCIBGX4SGhtKWPlW2QnkIENBu9OYfH3rX0YRsez60vLo=

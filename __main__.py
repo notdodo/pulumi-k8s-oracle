@@ -106,6 +106,7 @@ for instance in instances:
                         pod_subnet=pod_subnet,
                         service_subnet=service_subnet,
                         wireguard_config=args["wg_config"],
+                        keepalived_password=config.get_secret("keepalived_password"),
                     ),
                     "utf-8",
                 )
@@ -122,6 +123,7 @@ for instance in instances:
                         etc_hosts=etc_hosts,
                         cluster_advertise_address=instance["wg_ip"],
                         wireguard_config=args["wg_config"],
+                        keepalived_password=config.get_secret("keepalived_password"),
                     ),
                     "utf-8",
                 )
@@ -201,10 +203,18 @@ for instance in instances:
             f"kubectl taint nodes {instance['name']} ",
             "node-role.kubernetes.io/control-plane:NoSchedule-",
         )
-        pc.remote.Command(
+        cp_join = pc.remote.Command(
             f"join_{instance['name']}",
             connection=connection,
             create=join_cmd,
             update=pulumi.Output.concat("sudo kubeadm reset --force;", join_cmd),
             triggers=[i["instance"].id for i in instances],
         )
+
+        for record in config.require_object("cloudflare")[0]["records"]:
+            cloudflare.create_dns_records(
+                instance["name"],
+                instance["public_ip"],
+                record,
+                deps=[cp_join],
+            )
