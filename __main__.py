@@ -67,6 +67,7 @@ for instance in instances:
     instance["network"] = network
     instance["wg_private"] = config.require_secret(f"{instance['name']}_wg_private_key")
     instance["wg_public"] = config.require_secret(f"{instance['name']}_wg_public_key")
+    instance["keepalived_password"] = config.require_secret("keepalived_password")
     pulumi.export(f"\"{instance['name']}\" public IP:", instance["public_ip"])
 
 for instance in instances:
@@ -106,7 +107,7 @@ for instance in instances:
                         pod_subnet=pod_subnet,
                         service_subnet=service_subnet,
                         wireguard_config=args["wg_config"],
-                        keepalived_password=config.get_secret("keepalived_password"),
+                        keepalived_password=args["instance"]["keepalived_password"],
                     ),
                     "utf-8",
                 )
@@ -123,7 +124,7 @@ for instance in instances:
                         etc_hosts=etc_hosts,
                         cluster_advertise_address=instance["wg_ip"],
                         wireguard_config=args["wg_config"],
-                        keepalived_password=config.get_secret("keepalived_password"),
+                        keepalived_password=args["instance"]["keepalived_password"],
                     ),
                     "utf-8",
                 )

@@ -186,9 +186,9 @@ packages:
   - cri-o-runc
   - haproxy
   - keepalived
-  - kubelet
   - kubeadm
   - kubectl
+  - kubelet
   - wireguard
 
 runcmd:

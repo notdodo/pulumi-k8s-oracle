@@ -123,7 +123,6 @@ class Instance(pulumi.ComponentResource):
         )
 
     def _generate_user_data(self, extra_cmds: list = [], substitutions: dict = {}):
-        # user_data_plain = open(self._config.get("user_data")).read()
         user_data_plain = self._user_data
 
         for k, v in substitutions.items():
