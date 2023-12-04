@@ -425,11 +425,12 @@
         },
         "pulumi-tls": {
             "hashes": [
-                "sha256:02470a26a437f1e1967b3fdea0597e9e54e1d3575b4df3a677f19b5c82cdfe3e",
-                "sha256:88e9b7a2e5c3f5dae0f0828e203b082d78a9477e61fe286bb2e3c830fb1bc45f"
+                "sha256:59a7304eaeb622b6c06e55181fc02923ef44b54e34b8dc4b8bd6d37e90b62eb8",
+                "sha256:e5d50bad815b888f7fc10bfdc2ca3e469f6c8e16b395f025f15296c3e29e73c3"
             ],
             "index": "pypi",
-            "version": "==4.11.1"
+            "markers": "python_version >= '3.7'",
+            "version": "==5.0.0"
         },
         "pycparser": {
             "hashes": [
