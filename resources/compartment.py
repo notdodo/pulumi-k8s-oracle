@@ -17,7 +17,7 @@ class Compartment(pulumi.ComponentResource):
     def __create_compartment(self, name: str) -> oci.identity.Compartment:
         return oci.identity.Compartment(
             f"compartment_{name}",
-            name=f"compartment_{name}",
+            name=name,
             description="Compartment for the free tier",
             opts=self._child_opts,
         )
