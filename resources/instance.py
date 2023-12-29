@@ -154,7 +154,6 @@ class Instance(pulumi.ComponentResource):
                 private_ip=self._private_ip,
             ),
             display_name=self._resource_name,
-            fault_domain="FAULT-DOMAIN-1",
             metadata={
                 "user_data": self._user_data,
                 "ssh_authorized_keys": self._public_key,
