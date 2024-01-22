@@ -391,11 +391,11 @@
         },
         "pulumi": {
             "hashes": [
-                "sha256:52c9b087798d5793038fd1fc4815e47c5f8b683c1b45d3ff55cc2a9bc6109510"
+                "sha256:478093aadd959d87235f8e0026abe9eebc9a321a8627a6958014b07e45d0c8f7"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.7'",
-            "version": "==3.101.1"
+            "version": "==3.102.0"
         },
         "pulumi-cloudflare": {
             "hashes": [
@@ -416,12 +416,12 @@
         },
         "pulumi-oci": {
             "hashes": [
-                "sha256:6b450cf3a5ab10d32571efe45de8a004e07ea13560b61b250b793e1b6ea2a8aa",
-                "sha256:e54c8377957a2dafd86a7f4c290fe9f378045135e302e1eac89d84650318ec5b"
+                "sha256:6beef4f5e61ff5723c311b87117b27366c44229c82b84aaefc758c6c54312e14",
+                "sha256:dc8777709d127d079d00b2aacaae123ca4523824e37a7a1910c10ba02cdcb6bf"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.7'",
-            "version": "==1.18.0"
+            "version": "==1.19.0"
         },
         "pulumi-tls": {
             "hashes": [
@@ -469,6 +469,7 @@
                 "sha256:8d4e9c88387b0f5c7d5f281e55304de64cf7f9c0021a3525bd3b1c542da3b0e4",
                 "sha256:9046c58c4395dff28dd494285c82ba00b546adfc7ef001486fbf0324bc174fba",
                 "sha256:9eb6caa9a297fc2c2fb8862bc5370d0303ddba53ba97e71f08023b6cd73d16a8",
+                "sha256:a08c6f0fe150303c1c6b71ebcd7213c2858041a7e01975da3a99aed1e7a378ef",
                 "sha256:a0cd17c15d3bb3fa06978b4e8958dcdc6e0174ccea823003a106c7d4d7899ac5",
                 "sha256:afd7e57eddb1a54f0f1a974bc4391af8bcce0b444685d936840f125cf046d5bd",
                 "sha256:b1275ad35a5d18c62a7220633c913e1b42d44b46ee12554e5fd39c70a243d6a3",
