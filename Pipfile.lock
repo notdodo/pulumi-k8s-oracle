@@ -224,11 +224,11 @@
         },
         "dill": {
             "hashes": [
-                "sha256:76b122c08ef4ce2eedcd4d1abd8e641114bfc6c2867f49f3c41facf65bf19f5e",
-                "sha256:cc1c8b182eb3013e24bd475ff2e9295af86c1a38eb1aff128dac8962a9ce3c03"
+                "sha256:3ebe3c479ad625c4553aca177444d89b486b1d84982eeacded644afc0cf797ca",
+                "sha256:c36ca9ffb54365bdd2f8eb3eff7d2a21237f8452b57ace88b1ac615b7e815bd7"
             ],
-            "markers": "python_version >= '3.7'",
-            "version": "==0.3.7"
+            "markers": "python_version >= '3.8'",
+            "version": "==0.3.8"
         },
         "grpcio": {
             "hashes": [
@@ -278,7 +278,7 @@
                 "sha256:f20fd21f7538f8107451156dd1fe203300b79a9ddceba1ee0ac8132521a008ed",
                 "sha256:fda2783c12f553cdca11c08e5af6eecbd717280dc8fbe28a110897af1c15a88c"
             ],
-            "markers": "python_version >= '3.7'",
+            "markers": "python_version < '3.12'",
             "version": "==1.56.2"
         },
         "idna": {
@@ -391,11 +391,11 @@
         },
         "pulumi": {
             "hashes": [
-                "sha256:478093aadd959d87235f8e0026abe9eebc9a321a8627a6958014b07e45d0c8f7"
+                "sha256:f091cf3ce42eea67e732f65a9c5a7b5290ae23d67b44478c03795c512dc46605"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.7'",
-            "version": "==3.102.0"
+            "version": "==3.103.1"
         },
         "pulumi-cloudflare": {
             "hashes": [
@@ -416,12 +416,12 @@
         },
         "pulumi-oci": {
             "hashes": [
-                "sha256:6beef4f5e61ff5723c311b87117b27366c44229c82b84aaefc758c6c54312e14",
-                "sha256:dc8777709d127d079d00b2aacaae123ca4523824e37a7a1910c10ba02cdcb6bf"
+                "sha256:cfd2aa09852c8afcfbc86600d456f3d43581323930adec9cb6ce4309bc059fa2",
+                "sha256:e57a79dde6a7f1821e6eef18f26a9671a4e2eb4f7b9b35128af0ae31fc35c61d"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.7'",
-            "version": "==1.19.0"
+            "version": "==1.20.0"
         },
         "pulumi-tls": {
             "hashes": [
