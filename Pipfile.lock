@@ -435,12 +435,12 @@
         },
         "pulumi-oci": {
             "hashes": [
-                "sha256:c349ac40e8d10607bee55bbec03325b53bc4fa78c738cfa295f9de1c06d1da33",
-                "sha256:c869be2fc34fcf3758b4c6c26e7c834c9c55a0a11d796298f34073e2c4f70646"
+                "sha256:7e6718e8c5e94c31d0c43b0a2e3a6f85c356f3a3e3f0f98906f35d9e89ca3c0b",
+                "sha256:e5845523a20f2500a2bf5cfe886688ea2f5558b13e88b14056dc2a0a26ca06af"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==1.23.0"
+            "version": "==1.24.0"
         },
         "pulumi-tls": {
             "hashes": [
