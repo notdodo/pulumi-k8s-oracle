@@ -410,11 +410,11 @@
         },
         "pulumi": {
             "hashes": [
-                "sha256:70c1b384545897833ed50d25d6362d7ee44811f377a31a1333c31924d397a3c4"
+                "sha256:83543b13df444259d0709ab00d00c94ad4ad6ca84851b3623d30cd3a9503757d"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==3.111.1"
+            "version": "==3.112.0"
         },
         "pulumi-cloudflare": {
             "hashes": [
@@ -435,12 +435,12 @@
         },
         "pulumi-oci": {
             "hashes": [
-                "sha256:24a6ed997ca29b30f68be96ce435d7b9dfc60efd437f38bb30d6f4ab671d824b",
-                "sha256:a32cd2489337155bc7aef98dab2656de71f3aca9608f44f4405b195bb7bf3de9"
+                "sha256:3fab4002d1b5a23467daa838aee12fff1a216a88bff147d9c7495ea1c9c53365",
+                "sha256:bd77f6053ee6f08f8f5b5b2396860dc3b4413e3d57a270993be247cb34ea5982"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==1.28.0"
+            "version": "==1.29.0"
         },
         "pulumi-tls": {
             "hashes": [
