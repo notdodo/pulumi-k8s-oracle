@@ -444,12 +444,12 @@
         },
         "pulumi-tls": {
             "hashes": [
-                "sha256:8f15fe6c79729329b799c7a36396f87d9040174b4017985d956bc9297c9a788c",
-                "sha256:8f41cecfbbd33180170fea92a39be5cc78491a87159ffb456c736a2194bcda26"
+                "sha256:3a1ef283dbe4b8a69cfcb8f0b78027c7f7d33be3364ebf59bfe68adcef20b675",
+                "sha256:f348a444f0b7f28498e87fe65faee391ea6c9849cbfe91fe95629b3aa8d92cb0"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.7'",
-            "version": "==5.0.1"
+            "markers": "python_version >= '3.8'",
+            "version": "==5.0.2"
         },
         "pycparser": {
             "hashes": [
